@@ -1,0 +1,86 @@
+version: '3.4'
+
+services:
+  availability.api:
+    image: ${DOCKER_REGISTRY-}availabilityapi
+    build:
+      context: .
+      dockerfile: src/Availability/Api/Dockerfile
+
+  availability.manager.worker:
+    image: ${DOCKER_REGISTRY-}availabilitymanagerworker
+    build:
+      context: .
+      dockerfile: src/Availability/Manager/Worker/Dockerfile
+
+  availability.recovery.worker:
+    image: ${DOCKER_REGISTRY-}availabilityrecoveryworker
+    build:
+      context: .
+      dockerfile: src/Availability/Recovery/Worker/Dockerfile
+
+  availability.search.worker:
+    image: ${DOCKER_REGISTRY-}availabilitysearchworker
+    build:
+      context: .
+      dockerfile: src/Availability/Search/Worker/Dockerfile
+
+  dashboard.web:
+    image: ${DOCKER_REGISTRY-}dashboardweb
+    build:
+      context: .
+      dockerfile: src/Dashboard/Dockerfile
+
+  price.history.worker:
+    image: ${DOCKER_REGISTRY-}pricehistoryworker
+    build:
+      context: .
+      dockerfile: src/Price/History/Worker/Dockerfile
+
+  product.change.worker:
+    image: ${DOCKER_REGISTRY-}productchangeworker
+    build:
+      context: .
+      dockerfile: src/Product/Change/Worker/Dockerfile
+
+  product.categorization.worker:
+    image: ${DOCKER_REGISTRY-}productcategorizationworker
+    build:
+      context: .
+      dockerfile: src/Product/Categorization/Worker/Dockerfile
+
+  product.enrichment.macnaima.api:
+    image: ${DOCKER_REGISTRY-}productenrichmentmacnaimaapi
+    build:
+      context: .
+      dockerfile: src/Product/Enrichment/macnaima/Api/Dockerfile
+
+  product.enrichment.macnaima.worker:
+    image: ${DOCKER_REGISTRY-}productenrichmentmacnaimaworker
+    build:
+      context: .
+      dockerfile: src/Product/Enrichment/macnaima/Worker/Dockerfile
+
+  product.persistence.worker:
+    image: ${DOCKER_REGISTRY-}productpersistenceworker
+    build:
+      context: .
+      dockerfile: src/Product/Persistence/Worker/Dockerfile
+
+  product.saga.worker:
+    image: ${DOCKER_REGISTRY-}productsagaworker
+    build:
+      context: .
+      dockerfile: src/Product/Saga/Worker/Dockerfile
+
+  product.supplier.magalu.worker:
+    image: ${DOCKER_REGISTRY-}productsuppliermagaluworker
+    build:
+      context: .
+      dockerfile: src/Product/Supplier/Magalu/Worker/Dockerfile
+
+  search.worker:
+    image: ${DOCKER_REGISTRY-}searchworker
+    build:
+      context: .
+      dockerfile: src/Search/Worker/Dockerfile

@@ -1,0 +1,31 @@
+import json
+import boto3
+from boto3.dynamodb.conditions import Key
+
+def lambda_handler(event, context):
+    
+    dynamo = boto3.client("dynamodb")
+    URL = "https://3w0zg1oeh0.execute-api.us-east-2.amazonaws.com/production"
+    client = boto3.client("apigatewaymanagementapi", endpoint_url = URL)
+    dynamodb = boto3.resource('dynamodb')
+    
+    
+    table = dynamodb.Table('random')
+    response = table.scan()
+    data = response['Items']
+    
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        data.extend(response['Items'])
+ 
+    
+
+    response  = dynamo.scan(TableName="randwebsock")
+    for connection in response["Items"]:
+        response = client.post_to_connection(ConnectionId=connection["connectionId"]["S"], Data=json.dumps(data))
+    
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Have a nice Wordling')
+    }

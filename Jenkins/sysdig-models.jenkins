@@ -1,0 +1,65 @@
+// NOTAS 1 E 2 - SYSDIG EM DEV/QA E SYSDIG EM PROD COM ACESSO DOS DEVS - JULHO
+
+                        stage('Sysdig Analysis - Scan'){
+                            when {
+                              expression { SHOULD_PUSH_IMAGE == 'true' }
+                            }
+                            steps{
+                                script {
+                                    try {
+                                        sh(script: "mkdir -p sysdig-out")
+                                        sh(script: "curl -s https://download.sysdig.com/stable/inline_scan.sh | bash -s -- analyze -s https://secure.sysdig.com -k ${SYSDIG_TOKEN} -R sysdig-out -P ${IMAGE_URL}")
+                                    } catch (err) {
+                                        echo err.getMessage()
+                                        sh(script: "mv sysdig-out/*.pdf sysdig-out/sysdig-\$(date +%d-%m-%y)-${PROJECT_NAME}-${env.BUILD_ID}.pdf")
+                                        archiveArtifacts artifacts: 'sysdig-out/*.pdf', caseSensitive: false, defaultExcludes: false, followSymlinks: false
+                                    }
+                                }
+                            }
+                        }
+
+///////////////////////////////////////////////
+
+                        stage('Sysdig Analysis - Scan'){
+                            when {
+                              expression { SHOULD_PUSH_IMAGE == 'true' }
+                            }
+                            steps{
+                                sh "echo ${IMAGE_URL} > sysdig_secure_images"
+                                sysdig engineCredentialsId: 'sysdig-token', name: 'sysdig_secure_images', inlineScanning: true, bailOnFail: false, bailOnPluginFail: false
+                            }
+                        }
+
+// NOTA 3 - SYSDIG AUTOMATIZADO E BLOQUEANDO - FUNCIONAMENTO AUTOMATIZADO COM ALERTAS - SETEMBRO
+
+                        stage('Sysdig Analysis - Scan'){
+                            when {
+                              expression { SHOULD_PUSH_IMAGE == 'true' }
+                            }
+                            steps{
+                                sh "echo ${IMAGE_URL} > sysdig_secure_images"
+                                sysdig engineCredentialsId: 'sysdig-token', name: 'sysdig_secure_images', inlineScanning: true, bailOnFail: true, bailOnPluginFail: true
+                            }
+                        }
+
+// NOTA 4 - SYSDIG AUTOMATIZADO DEV/QA/PRD - MANDANDO NOTIFICAÇÃO PARA OS DONOS DA APP - NOVEMBRO
+
+                        stage('Sysdig Analysis - Scan'){
+                            when {
+                              expression { SHOULD_PUSH_IMAGE == 'true' }
+                            }
+                            steps{
+                                script {
+                                    try {
+                                        sh(script: "mkdir -p sysdig-out")
+                                        sh(script: "curl -s https://download.sysdig.com/stable/inline_scan.sh | bash -s -- analyze -s https://secure.sysdig.com -k d05325d1-7df7-4ea7-a95e-e8bf1a504b7e -R sysdig-out -P ${IMAGE_URL}")
+                                    } catch (err) {
+                                        echo err.getMessage()
+                                        sh(script: "mv sysdig-out/*.pdf sysdig-out/sysdig-\$(date +%d-%m-%y)-${PROJECT_NAME}-${env.BUILD_ID}.pdf")
+                                        archiveArtifacts artifacts: 'sysdig-out/*.pdf', caseSensitive: false, defaultExcludes: false, followSymlinks: false
+                                        sh "exit 1"
+                                        // COLOCA DISPARO DE EMAIL BASEADO NO USUÁRIO DO BITBUCKET QUE FEZ O COMMIT 
+                                    }
+                                }
+                            }
+                        }

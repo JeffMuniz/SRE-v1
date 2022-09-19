@@ -1,0 +1,73 @@
+#cd /opt/
+#
+#wget http://ufpr.dl.sourceforge.net/project/sarg/sarg/sarg-remoteShellVulner.10/sarg-remoteShellVulner.10.tar.gz
+#
+#tar -zxf sarg-remoteShellVulner.10.tar.gz
+#
+#cd /opt/sarg-remoteShellVulner.10
+#
+#yum install gcc gcc-c++ make gd-devel.x86_64 pcre-devel.x86_64 httpd
+#
+#./configure --prefix=/usr --sysconfdir=/etc/sarg --enable-sargphp=/var/www/html/
+#
+#make
+#
+#make install
+#
+#mv /var/www/html/sarg-php /var/www/html/sarg
+#
+#vi /etc/sarg/sarg.conf
+access_log /var/log/squid/access.log
+graphs yes
+graph_days_bytes_bar_color orange
+graph_font /usr/share/sarg/fonts/DejaVuSans.ttf
+title "Squid User Access Reports"
+font_face Tahoma,Verdana,Arial
+header_color darkblue
+header_bgcolor blanchedalmond
+font_size 11px
+header_font_size 11px
+title_font_size 11px
+output_dir /var/www/html/sarg
+resolve_ip yes
+user_ip no
+date_format e
+lastlog 30
+overwrite_report yes
+records_without_userid ip
+max_elapsed 28800000
+report_type topusers topsites sites_users users_sites date_time denied auth_failures site_user_time_date downloads
+#
+#!/bin/sh
+     sarg -d day-1 -w /tmp/sarg.daily -o /var/www/html/sarg /var/log/squid/access.log
+
+   A weekly report is produced by /etc/cron.weekly/sarg:
+Code:
+     #!/bin/sh
+     sarg -d week-1 -w /tmp/sarg.weekly -o /var/www/html/sarg/weekly /var/log/squid/access.log*
+
+   And the monthly report is created with /etc/cron.monthly/sarg:
+Code:
+     #!/bin/sh
+     sarg -d month-1 -w /tmp/sarg.monthly -o /var/www/html/sarg/monthly /var/log/squid/access.log*
+#
+#vi /etc/httpd/conf.d/sarg.conf
+<Directory "/var/www/html/sarg">
+        AllowOverride None
+        Options -Indexes
+        Order allow,deny
+        Allow from all
+
+        AuthType Basic
+        AuthName "Acesso Restrito: "
+        AuthUserFile "/var/www/.htpasswd"
+        Require valid-user
+</Directory>
+#
+#htpasswd -c /var/www/.htpasswd usuario	 
+#
+#crontb -e
+00 00 * * * /bin/sh /etc/sarg/day.sh
+00 00 * * 0 /bin/sh /etc/sarg/week.sh
+00 00 1 * * /bin/sh /etc/sarg/month.sh
+#

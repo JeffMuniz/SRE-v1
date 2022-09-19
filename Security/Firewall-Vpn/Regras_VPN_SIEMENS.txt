@@ -1,0 +1,77 @@
+# Ensure that all packets destined for local addresses start at our local address
+iptables -t nat -I POSTROUTING --src 172.16.0.0/24 --dst 213.146.112.253  -j SNAT --to-source 200.216.73.58
+iptables -t nat -I POSTROUTING --src 172.16.0.0/24 --dst 213.146.112.254  -j SNAT --to-source 200.216.73.58
+iptables -t nat -I POSTROUTING --src 172.16.0.0/24 --dst 129.73.116.88/29 -j SNAT --to-source 200.216.73.58
+
+iptables -t nat -I POSTROUTING --src 172.16.0.0/24 --dst 177.66.153.58 -j SNAT --to-source 200.216.73.58
+
+# Ensure that any IPsec secured packets are not further mangled
+iptables -t nat -I POSTROUTING --out-interface eth1 -m policy --dir out --pol ipsec -j ACCEPT
+
+# Ensure that any packets destined for a local network which are leaving over the WAN are secured with IPsec
+iptables -I OUTPUT  --dst 129.73.116.88/29 --out-interface eth1 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+iptables -I FORWARD --dst 129.73.116.88/29 --out-interface eth1 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+
+iptables -I OUTPUT  --dst 213.146.112.253 --out-interface eth1 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+iptables -I FORWARD --dst 213.146.112.253 --out-interface eth1 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+
+iptables -I OUTPUT  --dst 213.146.112.254 --out-interface eth1 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+iptables -I FORWARD --dst 213.146.112.254 --out-interface eth1 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+
+iptables -I OUTPUT  --dst 177.66.153.58 --out-interface eth1 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+iptables -I FORWARD --dst 177.66.153.58 --out-interface eth1 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+
+# Allow any packets secured by IPsec to be sent and received
+iptables -I INPUT  --in-interface  eth0 -m policy --dir in  --pol ipsec -j ACCEPT
+iptables -I OUTPUT --out-interface eth1 -m policy --dir out --pol ipsec -j ACCEPT
+
+# Allow any packets secured by IPsec to be forwarded as appropriate
+iptables -I FORWARD --in-interface eth0 --out-interface lan -m policy --dir in  --pol ipsec -j ACCEPT
+iptables -I FORWARD --in-interface eth1 --out-interface wan -m policy --dir out --pol ipsec -j ACCEPT
+
+# Allow any ISAKMP packets to be sent and received
+iptables -I INPUT  --in-interface  eth0 --protocol udp --dport isakmp -j ACCEPT
+iptables -I OUTPUT --out-interface eth1 --protocol udp --dport isakmp -j ACCEPT
+
+# Allow any UDP encapsulated IPsec packets to be sent and received
+iptables -I INPUT  --in-interface  eth1 --protocol udp --dport ipsec-nat-t -j ACCEPT
+iptables -I OUTPUT --out-interface eth1 --protocol udp --sport ipsec-nat-t -j ACCEPT
+iptables -I OUTPUT --out-interface eth1 --protocol udp --dport ipsec-nat-t -j ACCEPT
+
+iptables -I FORWARD -p esp -s 177.66.153.58 -d 172.16.0.210 -j ACCEPT
+iptables -I FORWARD -p esp -s 172.16.0.210 -d 177.66.153.58 -j ACCEPT
+
+iptables -I FORWARD -p esp -s 12.46.135.193 -d 172.16.0.210 -j ACCEPT
+iptables -I FORWARD -p esp -s 172.16.0.210 -d 12.46.135.193 -j ACCEPT
+
+iptables -I FORWARD -p ah -s 12.46.135.193 -d 172.16.0.210 -j ACCEPT
+iptables -I FORWARD -p ah -s 172.16.0.210 -d 12.46.135.193 -j ACCEPT
+
+iptables -I FORWARD -p ah -s 213.146.112.253 -d 172.16.0.210 -j ACCEPT
+iptables -I FORWARD -p ah -s 172.16.0.210 -d 213.146.112.253 -j ACCEPT
+
+iptables -I FORWARD -p ah -s 213.146.112.254 -d 172.16.0.210 -j ACCEPT
+iptables -I FORWARD -p ah -s 172.16.0.210 -d 213.146.112.254 -j ACCEPT
+
+iptables -I FORWARD -p tcp -s 12.46.135.193 -d 172.16.0.210 --sport 22 --dport 22 -j ACCEPT
+iptables -I FORWARD -p tcp -s 172.16.0.210 -d 12.46.135.193 --sport 22 --dport 22 -j ACCEPT
+
+iptables -I FORWARD -p udp -s 12.46.135.193 -d 172.16.0.210 --sport 500 --dport 500 -j ACCEPT
+iptables -I FORWARD -p udp -s 172.16.0.210 -d 12.46.135.193 --sport 500 --dport 500 -j ACCEPT
+
+iptables -I FORWARD -p udp -s 12.46.135.193 -d 172.16.0.210 --sport 4500 --dport 4500 -j ACCEPT
+iptables -I FORWARD -p udp -s 172.16.0.210 -d 12.46.135.193 --sport 4500 --dport 4500 -j ACCEPT
+
+iptables -t nat -I PREROUTING -i eth1 -p udp -m udp --dport 22 -d 200.216.73.58  -j DNAT --to-destination 172.16.0.210:22
+iptables -t nat -I PREROUTING -i eth1 -p udp -m udp --dport 4500 -d 200.216.73.58  -j DNAT --to-destination 172.16.0.210:4500
+iptables -t nat -I PREROUTING -i eth1 -p udp -m udp --dport 500 -d 200.216.73.58 -j DNAT --to-destination 172.16.0.210:500
+
+iptables -I INPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -I INPUT -m state --state NEW,ESTABLISHED,RELATED -m tcp -p tcp --dport 22 -j ACCEPT
+iptables -I INPUT -m state --state NEW,ESTABLISHED,RELATED -m udp -p udp --dport 500 -j ACCEPT
+iptables -I INPUT -m state --state NEW,ESTABLISHED,RELATED -m udp -p udp --dport 4500 -j ACCEPT
+
+iptables -t nat -I POSTROUTING 1 -p 50 -j ACCEPT
+iptables -t nat -I POSTROUTING 1 -p 51 -j ACCEPT
+
+iptables -I INPUT  --in-interface  eth1 --protocol udp --sport ipsec-nat-t -m state --state ESTABLISHED -j ACCEPT

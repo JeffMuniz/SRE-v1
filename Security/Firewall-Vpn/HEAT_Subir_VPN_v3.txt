@@ -1,0 +1,94 @@
+
+Dados de acesso remoto via SSH, utilizar o PUTTY:
+
+
+HEAT: root@189.80.28.34 Porta: 2204 | Senha: inter@@2015
+HEAT: root@10.42.111.20 Porta: 2204 | Senha: inter@@2015
+
+HEJBC: root@200.141.166.242 Porta: 22| Senha: 0p9o8i7u6y
+HEJBC: root@172.16.0.1 Porta: 22| Senha: 0p9o8i7u6y
+
+
+
+
+1 - Iniciar o serviço do IPSec nas 2 unidade:
+
+[root@fw-hejbc ~]# service ipsec start
+
+[root@srvfw ~]# service ipsec start
+
+2 - Escurtar as regras nas 2 unidade:
+
+[root@fw-hejbc]# sh /etc/sysconfig/vpn.sh
+
+[root@srvfw]# sh /etc/sysconfig/vpn.sh
+
+
+Para parar a VPN para executar os passos abaixo:
+
+
+1 - Iniciar o serviço do IPSec nas 2 unidade:
+
+[root@fw-hejbc ~]# service ipsec stop
+
+[root@srvfw ~]# service ipsec stop
+
+
+2 - Execurtar as regras nas 2 unidade:
+
+
+[root@fw-hejbc]# sh /etc/sysconfig/firewall.sh
+
+[root@srvfw]# sh /etc/sysconfig/firewall.sh
+
+
+
+3 - Executar o comando abaixo no HEAT:
+
+route add -net 172.16.0.0/16 gw 192.168.0.2
+
+4 - Executar o comando abaixo no HEJBC:
+
+route add -net 10.42.0.0/16 gw 192.168.0.1
+
+OBS.: Executar somente o que tiver depois do ( # )!
+
+
+5 - Efetuado os 4 procedimento bastar efetuar um teste de ping de uma unidade para outra conforme o exemplo abaixo:
+
+Teste de ping do HEJBC para HEAT:
+
+[root@srvfw sysconfig]# ping 172.16.0.1
+PING 172.16.0.1 (172.16.0.1) 56(84) bytes of data.
+64 bytes from 172.16.0.1: icmp_seq=1 ttl=64 time=79.2 ms
+64 bytes from 172.16.0.1: icmp_seq=2 ttl=64 time=40.0 ms
+64 bytes from 172.16.0.1: icmp_seq=3 ttl=64 time=73.2 ms
+64 bytes from 172.16.0.1: icmp_seq=4 ttl=64 time=45.2 ms
+^C
+--- 172.16.0.1 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3251ms
+rtt min/avg/max/mdev = 40.014/59.449/79.280/17.058 ms
+[root@srvfw sysconfig]# traceroute 172.16.0.1
+traceroute to 172.16.0.1 (172.16.0.1), 30 hops max, 60 byte packets
+ 1  172.16.0.1 (172.16.0.1)  36.354 ms  36.316 ms  38.715 ms
+[root@srvfw sysconfig]#
+
+
+
+Teste de ping do HEAT para HEJBC:
+
+[root@fw-hejbc sysconfig]# ping 10.42.111.20
+PING 10.42.111.20 (10.42.111.20) 56(84) bytes of data.
+64 bytes from 10.42.111.20: icmp_seq=1 ttl=64 time=24.1 ms
+64 bytes from 10.42.111.20: icmp_seq=2 ttl=64 time=16.2 ms
+64 bytes from 10.42.111.20: icmp_seq=3 ttl=64 time=8.27 ms
+64 bytes from 10.42.111.20: icmp_seq=4 ttl=64 time=37.2 ms
+^C
+--- 10.42.111.20 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3459ms
+rtt min/avg/max/mdev = 8.274/21.476/37.213/10.683 ms
+[root@fw-hejbc sysconfig]# traceroute 10.42.111.20
+traceroute to 10.42.111.20 (10.42.111.20), 30 hops max, 60 byte packets
+ 1  10.42.111.20 (10.42.111.20)  32.838 ms  32.847 ms  32.902 ms
+[root@fw-hejbc sysconfig]#
+

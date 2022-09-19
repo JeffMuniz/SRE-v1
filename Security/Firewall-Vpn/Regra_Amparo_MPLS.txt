@@ -1,0 +1,26 @@
+iptables -I FORWARD -s 172.18.1.0/24 -d 192.168.1.0/22 -j ACCEPT
+iptables -I FORWARD -s 192.168.1.0/22 -d 172.18.1.0/24 -j ACCEPT
+
+iptables -I INPUT -s 172.29.0.0/16 -j ACCEPT
+iptables -I INPUT -s 172.18.0.0/16 -j ACCEPT
+iptables -I OUTPUT -s 172.29.0.0/16 -j ACCEPT
+iptables -I OUTPUT -s 172.18.0.0/16 -j ACCEPT
+
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.20 -p tcp --dport 135 -j DNAT --to 192.168.1.20:135
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.20 -p tcp --dport 139 -j DNAT --to 192.168.1.20:139
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.20 -p tcp --dport 445 -j DNAT --to 192.168.1.20:445
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.20 -p udp --dport 135 -j DNAT --to 192.168.1.20:135
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.20 -p udp --dport 139 -j DNAT --to 192.168.1.20:139
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.20 -p udp --dport 445 -j DNAT --to 192.168.1.20:445
+
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.12 -p tcp --dport 1521 -j DNAT --to 192.168.1.12:1521
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.13 -p tcp --dport 1521 -j DNAT --to 192.168.1.13:1521
+
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.12 -p tcp --dport 1521 -j DNAT --to 192.168.1.12:1521
+iptables -t nat -A PREROUTING -s 172.18.1.1 -d 172.29.4.13 -p tcp --dport 1521 -j DNAT --to 192.168.1.13:1521
+
+
+iptables -t nat -A POSTROUTING -o eth3 -j SNAT --to 172.18.1.1 
+
+iptables -A PREROUTING -t nat -d 172.18.1.0/24 -j DNAT --to 172.29.4.0/24
+iptables -A PREROUTING -t nat -d <ip_de_destino_externo> -j DNAT --to <ip_de_origem_interno>

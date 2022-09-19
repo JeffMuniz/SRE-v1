@@ -1,0 +1,19 @@
+#!/bin/bash
+# Script Check VPN IPSEC SIGIronFS - InterSolution
+# Criado por Kaio Barauna - 18/01/2017
+#
+# Adicionar a linha abaixo no crontab
+# * * * * *   /etc/sysconfig/check_vpn.sh
+
+if ! ping -c 5 10.10.1.157 >/dev/null; then
+#se o ip não responder mostra Executa alinha abaixo!
+echo "`date` - VPN CAIU!" >> /var/log/check_vpn.log
+/sbin/service ipsec restart
+
+else
+#se o ip responder o ping mostra online
+echo "`date` - VPN OK!" >> /var/log/check_vpn.log
+#(sleep 30)
+exit 1
+fi
+exit

@@ -1,0 +1,162 @@
+pipeline {
+    agent any
+
+    environment {
+        SHOULD_TEST = "false"
+        SHOULD_BUILD_IMAGE = "true"
+        SHOULD_ANALYZE = "false"
+        SHOULD_PUSH_IMAGE = "true"
+        SHOUD_STORE_ARTIFACT = "false"
+        SHOULD_DEPLOY = "false"
+        DOCKERFILE = "Dockerfile"
+
+        PROJECT_NAME="bpm-api-macnuda"
+        GIT_URL="git@bitbucket.org:maquiinaedu/${PROJECT_NAME}.git"
+
+        IMAGE_TAG = "${PROJECT_NAME}"
+        IMAGE_NAME = "sysdig-tmp:${IMAGE_TAG}"
+        IMAGE_URL = "957723433972.dkr.ecr.sa-east-1.amazonaws.com/${IMAGE_NAME}"
+    }
+
+    stages {
+        stage ('CI') {
+            agent {
+                label 'TestContainer'
+            }
+            stages {
+                stage('SCM - Checkout') {
+                    steps{
+                        cleanWs()
+                        git branch: "sysdig-test",
+                        url: GIT_URL
+                        echo 'SCM Checkout'
+                    }
+                }
+                stage ('Tests'){
+                    when {
+                        expression { SHOULD_TEST == 'true' }
+                    }
+                    stages {
+                        stage('Integration Tests - Maven'){
+                            steps {
+                                withMaven( maven: 'maven-3', jdk: 'jdk11-open'){
+                                    timeout ( time: 60, unit: 'MINUTES'){
+                                        sh "./mvnw checkstyle:check -q"
+                                        sh "./mvnw dependency:go-offline -q"
+                                        sh "./mvnw test verify jacoco:report"
+                                    }
+                                }
+                            }
+                        }
+                        stage('Code coverage - Jacoco'){
+                            steps{
+                                jacoco(
+                                    execPattern: 'target/*.exec',
+                                    classPattern: 'target/classes',
+                                    sourcePattern: 'src/main/java',
+                                    exclusionPattern: 'src/test*'
+                                )
+                            }
+                        }
+                    }
+                }
+                stage ('SonarQube & Quality Gate'){
+                    when {
+                        expression { SHOULD_ANALYZE == 'true' }
+                    }
+                    stages{
+                        stage('Analysis - SonarQube'){
+                            steps {
+                                withSonarQubeEnv('SONAR'){
+                                    sh "./mvnw sonar:sonar \
+                                        -Dsonar.host.url=\"${env.SONAR_SERVER}\" \
+                                        -Dsonar.projectName=\"${PROJECT_NAME}\" \
+                                        -Dsonar.projectKey=\"${PROJECT_NAME}\" \
+                                        -Dsonar.coverage.jacoco.xmlReportPaths=target/jacoco/test/jacoco.xml,target/jacoco/integrationTest/jacoco.xml"
+                                }
+                            }
+                        }
+                        stage('Quality gate'){
+                            steps {
+                                timeout ( time: 1, unit: 'HOURS'){
+                                    script{
+                                        def qg = waitForQualityGate()
+                                        if (qg.status != 'OK'){
+                                            error "Pipeline aborted due to a quality gate failure: ${qg.status}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage ('CD') {
+            stages {
+                stage ('Deploy') {
+                    agent {
+                        label 'Build'
+                    }
+                    stages{
+                        stage('SCM - Checkout') {
+                            steps{
+                                cleanWs()
+                                git branch: "sysdig-test",
+                                url: GIT_URL
+                                echo 'SCM Checkout'
+                            }
+                        }
+                        stage('Build - Maven'){
+                            steps{
+                                withMaven( maven: 'maven-3', jdk: 'jdk11-open'){
+                                    sh "./mvnw clean install -U -DskipTests"
+                                }
+                            }
+                        }
+                        stage ('Build - Docker') {
+                            when {
+                              expression { SHOULD_BUILD_IMAGE == 'true' }
+                            }
+                            steps {
+                                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'mac-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                                    sh "export AWS_DEFAULT_REGION=sa-east-1"
+                                    sh ('\$(aws ecr get-login --no-include-email --region sa-east-1)')
+                                    sh "docker build --file ${DOCKERFILE} --pull -t ${IMAGE_URL} --no-cache ."
+                                }
+                            }
+                        }
+                        stage('Push Image - Docker'){
+                            when {
+                              expression { SHOULD_PUSH_IMAGE == 'true' }
+                            }
+                            steps{
+                                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'mac-ecr', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                                    sh "docker push ${IMAGE_URL}"
+                                    echo "Image push complete"
+                                }
+                            }
+                        }
+                        stage('Sysdig Analysis - Scan'){
+                            when {
+                              expression { SHOULD_PUSH_IMAGE == 'true' }
+                            }
+                            steps{
+                                script {
+                                    try {
+                                        sh(script: "mkdir sysdig-out")
+                                        sh(script: "curl -s https://download.sysdig.com/stable/inline_scan.sh | bash -s -- analyze -s https://secure.sysdig.com -k d05325d1-7df7-4ea7-a95e-e8bf1a504b7e -R sysdig-out -P ${IMAGE_URL}")
+                                    } catch (err) {
+                                        echo err.getMessage()
+                                        sh(script: "mv sysdig-out/*.pdf sysdig-out/sysdig-\$(date +%d-%m-%y)-${PROJECT_NAME}.pdf")
+                                        archiveArtifacts artifacts: 'sysdig-out/*.pdf', caseSensitive: false, defaultExcludes: false, followSymlinks: false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

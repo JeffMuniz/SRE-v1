@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Databases", "Databases", "{378BF1E2-086C-4588-AD2E-2528A6C4A2B7}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "PRD_DB_AZU_Live_Catalog", "src\Databases\PRD_DB_AZU_Live_Catalog\PRD_DB_AZU_Live_Catalog.sqlproj", "{773BDD8F-C6B3-4D7B-B767-46679FBB294E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{773BDD8F-C6B3-4D7B-B767-46679FBB294E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{773BDD8F-C6B3-4D7B-B767-46679FBB294E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{773BDD8F-C6B3-4D7B-B767-46679FBB294E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{773BDD8F-C6B3-4D7B-B767-46679FBB294E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{773BDD8F-C6B3-4D7B-B767-46679FBB294E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{773BDD8F-C6B3-4D7B-B767-46679FBB294E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{773BDD8F-C6B3-4D7B-B767-46679FBB294E} = {378BF1E2-086C-4588-AD2E-2528A6C4A2B7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {82602E93-5797-4F45-BF03-095488F6546A}
+	EndGlobalSection
+EndGlobal

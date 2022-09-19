@@ -1,0 +1,71 @@
+
+Senhores, boa tarde.
+
+Segue o procedimento realizado o para teste alteração do link:
+
+1 - Iniciar o serviço do IPSec 
+
+# service ipsec start
+
+2 -  Rodar o script da VPN:
+
+# /etc/sysconfig/vpn.sh
+# /etc/sysconfig/vpnuoldiveo.sh
+
+3 - Fazer um teste de ping e tracert para o Ip (10.10.10.2):
+
+# ping 10.10.10.2
+
+# tracertroute 10.10.10.2
+
+Saida do comando:
+
+Tracing route to med-win-app010.medsalva.local [10.10.10.2] over a maximum of 30 hops:
+
+  1    <1 ms    <1 ms    <1 ms  proxy.medsalva.local [192.168.0.6]
+  2     *        *        *     Request timed out.
+  3     5 ms     5 ms     9 ms  med-win-app010.medsalva.local [10.10.10.2]
+  
+Teste do Link Level3:
+
+1 - Efeturar traceroute para IP: 10.10.10.2:
+
+Saltos em está passando pelo IP: 10.10.10.45
+	
+  
+  
+  
+Trace complete.
+
+
+Tabela de Roteamento IP do Kernel
+Destino         Roteador        MáscaraGen.    Opções Métrica Ref   Uso Iface
+10.10.45.0      0.0.0.0         255.255.255.252 U     0      0        0 p1p1
+186.201.177.56  0.0.0.0         255.255.255.248 U     0      0        0 p2p1
+10.10.20.0      10.10.45.1      255.255.255.0   UG    0      0        0 p1p1
+192.168.0.0     0.0.0.0         255.255.255.0   U     0      0        0 p3p1
+10.10.30.0      10.10.45.1      255.255.255.0   UG    0      0        0 p1p1
+10.10.10.0      10.10.45.1      255.255.255.0   UG    0      0        0 p1p1
+192.168.10.0    192.168.0.3     255.255.255.0   UG    0      0        0 p3p1
+169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 p1p1
+169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 p2p1
+169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 p3p1
+0.0.0.0         186.201.177.57  0.0.0.0         UG    0      0        0 p2p1
+
+
+
+Após Rodar VPN=
+
+Tabela de Roteamento IP do Kernel
+Destino         Roteador        MáscaraGen.    Opções Métrica Ref   Uso Iface
+10.10.45.0      0.0.0.0         255.255.255.252 U     0      0        0 p1p1
+186.201.177.56  0.0.0.0         255.255.255.248 U     0      0        0 p2p1
+10.10.20.0      10.10.45.1      255.255.255.0   UG    0      0        0 p1p1
+192.168.0.0     0.0.0.0         255.255.255.0   U     0      0        0 p3p1
+10.10.30.0      10.10.45.1      255.255.255.0   UG    0      0        0 p1p1
+10.10.10.0      10.10.45.1      255.255.255.0   UG    0      0        0 p1p1
+192.168.10.0    192.168.0.3     255.255.255.0   UG    0      0        0 p3p1
+169.254.0.0     0.0.0.0         255.255.0.0     U     1002   0        0 p1p1
+169.254.0.0     0.0.0.0         255.255.0.0     U     1003   0        0 p2p1
+169.254.0.0     0.0.0.0         255.255.0.0     U     1004   0        0 p3p1
+0.0.0.0         186.201.177.57  0.0.0.0         UG    0      0        0 p2p1

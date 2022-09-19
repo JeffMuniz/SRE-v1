@@ -1,0 +1,29 @@
+iptables -t mangle -I NoCat5281 -m mac --mac-source 9C:AD:97:FF:B9:3E -j MARK --set-mark 3
+iptables -t nat -I PREROUTING -m mac --mac-source 9C:AD:97:FF:B9:3E -p tcp --dport 80 -j DNAT --to 192.168.0.64:3128
+iptables -t nat -I PREROUTING -m mac --mac-source 9C:AD:97:FF:B9:3E -p tcp --dport 80 -j REDIRECT --to 3128
+iptables -t filter -I NoCat_Inbound -m mac --mac-source 9C:AD:97:FF:B9:3E -j ACCEPT
+iptables -t mangle -I NoCat5281 -m mac --mac-source 9c-ad-97-ff-89-3e-j MARK --set-mark 3
+iptables -t nat -I PREROUTING -m mac --mac-source 9c-ad-97-ff-89-3e-p tcp --dport 80 -j DNAT --to 192.168.0.64:3128
+iptables -t nat -I PREROUTING -m mac --mac-source 9c-ad-97-ff-89-3e-p tcp --dport 80 -j REDIRECT --to 3128
+iptables -t filter -I NoCat_Inbound -m mac --mac-source 9c-ad-97-ff-89-3e-j ACCEPT
+iptables -t mangle -I NoCat5281 -m mac --mac-source 9c-ad-97-ff-89-3e -j MARK --set-mark 3
+iptables -t nat -I PREROUTING -m mac --mac-source 9c-ad-97-ff-89-3e -p tcp --dport 80 -j DNAT --to 192.168.0.64:3128
+iptables -t nat -I PREROUTING -m mac --mac-source 9c-ad-97-ff-89-3e -p tcp --dport 80 -j REDIRECT --to 3128
+iptables -t filter -I NoCat_Inbound -m mac --mac-source 9c-ad-97-ff-89-3e -j ACCEPT
+
+iptables -t mangle -I NoCat5281 -m mac --mac-source f8:32:e4:8f:ea:e4-j MARK --set-mark 3
+iptables -t nat -I PREROUTING -m mac --mac-source f8:32:e4:8f:ea:e4-p tcp --dport 80 -j DNAT --to 192.168.0.64:3128
+iptables -t nat -I PREROUTING -m mac --mac-source f8:32:e4:8f:ea:e4-p tcp --dport 80 -j REDIRECT --to 3128
+iptables -t filter -I NoCat_Inbound -m mac --mac-source f8:32:e4:8f:ea:e4-j ACCEPT
+iptables -t mangle -I NoCat5281 -m mac --mac-source f8:32:e4:8f:ea:e4 -j MARK --set-mark 3
+iptables -t nat -I PREROUTING -m mac --mac-source f8:32:e4:8f:ea:e4 -p tcp --dport 80 -j DNAT --to 192.168.0.64:3128
+iptables -t nat -I PREROUTING -m mac --mac-source f8:32:e4:8f:ea:e4 -p tcp --dport 80 -j REDIRECT --to 3128
+iptables -t filter -I NoCat_Inbound -m mac --mac-source f8:32:e4:8f:ea:e4 -j ACCEPT
+iptables -t mangle -I NoCat5281 -m mac --mac-source f8:32:e4:8f:ea:e4 -j MARK --set-mark 3
+iptables -t nat -I PREROUTING -m mac --mac-source f8:32:e4:8f:ea:e4 -p tcp --dport 80 -j DNAT --to 192.168.0.64:3128
+iptables -t nat -I PREROUTING -m mac --mac-source f8:32:e4:8f:ea:e4 -p tcp --dport 80 -j REDIRECT --to 3128
+iptables -t filter -I NoCat_Inbound -m mac --mac-source f8:32:e4:8f:ea:e4 -j ACCEPT
+
+
+iptables -nL | grep F8:32:E4:8F:EA:E4
+iptables -nL | grep F8:32:E4:8F:EA:E4

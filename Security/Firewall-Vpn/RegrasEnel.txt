@@ -1,0 +1,20 @@
+Incluido procedimento na mauqina do SIGMon do Cliente para fazer o Rotemanto dos pacotes.
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+sysctl -p
+
+iptables -t nat -I PREROUTING -d 172.27.120.202 -j DNAT --to 172.16.67.10
+iptables -t nat -I POSTROUTING -d 172.16.67.10 -j MASQUERADE
+
+ifup eth0:1
+
+route add -net 10.21.2.0/16 gw 172.27.120.201
+
+###  Regras VPN ENEL:
+
+[root@hst-firewall sysconfig]# iptables -nL | grep 10.18
+ACCEPT     all  --  10.18.1.144          172.16.67.10
+ACCEPT     all  --  10.18.1.144          192.168.0.0/16
+ACCEPT     all  --  10.18.1.144          172.27.120.0/24
+

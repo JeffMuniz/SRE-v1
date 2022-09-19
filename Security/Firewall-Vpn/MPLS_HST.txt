@@ -1,0 +1,13 @@
+
+
+SE ATENTAR A ESSA REGRA E A ESTÁ VARIAVEL (net_mpls E net_mpls2)
+
+
+
+iptables -I FORWARD -d $net_mpls2 -j ACCEPT
+iptables -t nat -I PREROUTING -d $net_mpls2 -j ACCEPT
+iptables -t mangle -I PREROUTING -d $net_mpls2 -j ACCEPT
+iptables -t mangle -I  OUTPUT  -d $net_mpls2 -j ACCEPT
+iptables -t mangle -I FORWARD -d $net_mpls2 -j ACCEPT
+iptables -t mangle -I POSTROUTING -d $net_mpls2 -j ACCEPT
+iptables -t nat -I POSTROUTING -d $net_mpls2 -j SNAT --to $ip_in

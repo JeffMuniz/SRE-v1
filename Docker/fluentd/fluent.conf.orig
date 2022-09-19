@@ -1,0 +1,12 @@
+<source>
+  @type forward
+</source>
+
+<match **>
+  @type gelf
+  host 172.27.1.177
+  port 7471
+  <buffer>
+    flush_interval 5s
+  </buffer>
+</match>

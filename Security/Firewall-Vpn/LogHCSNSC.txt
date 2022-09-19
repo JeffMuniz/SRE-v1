@@ -1,0 +1,24 @@
+Oct  8 04:02:02 srv-ora-02 syslogd 1.4.1: restart.
+Oct 11 12:13:16 srv-ora-02 gdm[9251]: Couldn't authenticate user
+Oct 11 12:15:15 srv-ora-02 last message repeated 2 times
+Oct 11 12:25:38 srv-ora-02 kernel: bnx2: eth0 NIC Copper Link is Down
+Oct 11 12:25:42 srv-ora-02 kernel: bnx2: eth0 NIC Copper Link is Up, 1000 Mbps full duplex
+Oct 11 12:28:13 srv-ora-02 gconfd (root-19891): starting (version 2.14.0), pid 19891 user 'root'
+Oct 11 12:28:13 srv-ora-02 gconfd (root-19891): Resolved address "xml:readonly:/etc/gconf/gconf.xml.mandatory" to a read-only configuration source at position 0
+Oct 11 12:28:13 srv-ora-02 gconfd (root-19891): Resolved address "xml:readwrite:/root/.gconf" to a writable configuration source at position 1
+Oct 11 12:28:13 srv-ora-02 gconfd (root-19891): Resolved address "xml:readonly:/etc/gconf/gconf.xml.defaults" to a read-only configuration source at position 2
+Oct 11 12:28:14 srv-ora-02 pcscd: winscard.c:304:SCardConnect() Reader E-Gate 0 0 Not Found
+Oct 11 12:28:14 srv-ora-02 last message repeated 2 times
+Oct 11 12:28:14 srv-ora-02 nm-system-settings: Loaded plugin ifcfg-rh: (c) 2007 - 2008 Red Hat, Inc.  To report bugs please use the NetworkManager mailing list.
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh: parsing /etc/sysconfig/network-scripts/ifcfg-eth0 ...
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh:     read connection 'System eth0'
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh: parsing /etc/sysconfig/network-scripts/ifcfg-eth1 ...
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh:     read connection 'System eth1'
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh: parsing /etc/sysconfig/network-scripts/ifcfg-lo ...
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh: parsing /etc/sysconfig/network-scripts/ifcfg-eth3 ...
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh:     read connection 'System eth3'
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh: parsing /etc/sysconfig/network-scripts/ifcfg-eth2 ...
+Oct 11 12:28:14 srv-ora-02 nm-system-settings:    ifcfg-rh:     read connection 'System eth2'
+Oct 11 12:28:14 srv-ora-02 gconfd (root-19891): Resolved address "xml:readwrite:/root/.gconf" to a writable configuration source at position 0
+Oct 11 12:28:17 srv-ora-02 pcscd: winscard.c:304:SCardConnect() Reader E-Gate 0 0 Not Found
+[root@srv-ora-02 gconf.xml.mandatory]#

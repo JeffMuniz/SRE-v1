@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>Latest</LangVersion>
+    <AssemblyName>Catalog.Integration.Shared.Backend</AssemblyName>
+    <RootNamespace>Shared.Backend</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Optimize Condition="'$(Configuration)'=='Debug'">false</Optimize>
+    <Optimize Condition="'$(Configuration)'!='Debug'">true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.27.2" />
+    <PackageReference Include="Humanizer.Core.pt" Version="2.14.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Messaging\Contracts\Shared.Messaging.Contracts.csproj" />
+  </ItemGroup>
+</Project>

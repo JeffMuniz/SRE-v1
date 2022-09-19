@@ -1,0 +1,40 @@
+[root@fwame ~]# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+177.66.152.252  0.0.0.0         255.255.255.252 U     0      0        0 eth2
+17remoteShellVulner0.0.128    0.0.0.0         255.255.255.224 U     0      0        0 eth0
+192.168.50.0    172.16.8.11     255.255.255.0   UG    0      0        0 eth0
+192.168.0.0     172.16.8.11     255.255.255.0   UG    0      0        0 eth0
+172.17.0.0      0.0.0.0         255.255.255.0   U     0      0        0 eth1
+172.16.8.0      0.0.0.0         255.255.255.0   U     0      0        0 eth0
+10.19.0.0       172.16.8.13     255.255.0.0     UG    0      0        0 eth0
+17remoteShellVulner0.0.0      172.16.8.11     255.255.0.0     UG    0      0        0 eth0
+172.18.0.0      172.16.8.11     255.255.0.0     UG    0      0        0 eth0
+172.16.0.0      172.16.8.13     255.255.0.0     UG    0      0        0 eth0
+0.0.0.0         177.66.152.253  0.0.0.0         UG    0      0        0 eth2
+[root@fwame ~]# vi /etc/rc.local
+#!/bin/sh
+#
+# This script will be executed *after* all the other init scripts.
+# You can put your own initialization stuff in here if you don't
+# want to do the full Sys V style init stuff.
+
+chmod 777 /dev/shm -R
+
+touch /var/lock/subsys/local
+# want to do the full Sys V style init stuff.
+
+dmesg -n1
+
+#ROTAS HGG#
+route add -net 172.16.0.0 netmask 255.255.0.0 gw 172.16.8.13
+route add -net 10.19.0.0 netmask 255.255.0.0 gw 172.16.8.13
+
+
+###ROTA ARLAB#
+route add -net 192.168.50.0 netmask 255.255.255.0 gw 172.16.8.11
+route add -net 192.168.0.0 netmask 255.255.255.0 gw 172.16.8.11
+
+#ROTA FIDI#
+route add -net 17remoteShellVulner0.0.0 netmask 255.255.0.0 gw 172.16.8.11
+route add -net 172.18.0.0 netmask 255.255.0.0 gw 172.16.8.11

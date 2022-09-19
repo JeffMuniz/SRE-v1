@@ -1,0 +1,14 @@
+var client = new AmazonDynamoDBClient();
+
+var lastKeyEvaluated = new Dictionary<string, AttributeValue>() 
+{ 
+    { "YOUR_HASH_KEY", new AttributeValue(Guid.NewGuid().ToString()) } 
+};
+
+var request = new ScanRequest()
+{
+    TableName = YOUR_TABLE_NAME,
+    ExclusiveStartKey = lastKeyEvaluated,
+    Limit = 1
+};
+var response = client.Scan(request);

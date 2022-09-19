@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>Latest</LangVersion>
+    <AssemblyName>Catalog.Integration.Shared.Job.Configuration</AssemblyName>
+    <RootNamespace>Shared.Job.Configuration</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Optimize Condition="'$(Configuration)'=='Debug'">false</Optimize>
+    <Optimize Condition="'$(Configuration)'!='Debug'">true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.Core" Version="1.7.38" />
+    <PackageReference Include="Hangfire.Mongo" Version="0.7.28" />
+    <PackageReference Include="Hangfire.NetCore" Version="1.7.38" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+  </ItemGroup>
+</Project>

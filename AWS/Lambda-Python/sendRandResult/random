@@ -1,0 +1,28 @@
+import json
+import boto3
+
+def lambda_handler(event, context):
+    dynamo = boto3.client("dynamodb")
+    URL = "https://3w0zg1oeh0.execute-api.us-east-2.amazonaws.com/production"
+    client = boto3.client("apigatewaymanagementapi", endpoint_url = URL)
+    #msg = {"word": "Fixed Server Message"}
+    #word = dynamo.scan(TableName="random")
+    response  = dynamo.scan(TableName="random")
+    data = response['Items']
+
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        data.extend(response['Items'])
+#EOF
+    data1 = response['Items']
+    
+    response  = dynamo.scan(TableName="randwebsock")
+    
+    for connection in response["Items"]:
+        response = client.post_to_connection(ConnectionId=connection["connectionId"]["S"], Data=json.dumps(data1))
+    
+    # TODO implement
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Have a nice Wordling')
+    }

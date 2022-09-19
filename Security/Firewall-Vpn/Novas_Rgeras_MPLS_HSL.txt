@@ -1,0 +1,121 @@
+172.16.42.250
+
+### MPLS
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 137 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 138 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 139 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 139 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 445 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 1521 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 137 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 138 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 139 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 139 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 445 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 1521 -j ACCEPT
+
+iptables -I INPUT -s 172.16.0.0/16 -j ACCEPT
+iptables -I FORWARD -s 172.16.0.0/16 -d 192.168.0.0/16 -j ACCEPT
+iptables -t nat -I POSTROUTING -d 172.16.42.0/24 -j SNAT --to 172.16.42.250
+iptables -t nat -I POSTROUTING -d 172.29.1.0/24 -j SNAT --to 172.16.42.250
+
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.12 -p tcp --dport 135 -j DNAT --to 192.168.1.12:135
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.12 -p tcp --dport 136 -j DNAT --to 192.168.1.12:136
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.12 -p tcp --dport 137 -j DNAT --to 192.168.1.12:137
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.12 -p tcp --dport 138 -j DNAT --to 192.168.1.12:138
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.12 -p tcp --dport 139 -j DNAT --to 192.168.1.12:139
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.12 -p tcp --dport 445 -j DNAT --to 192.168.1.12:445
+
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.17 -p udp --dport 135 -j DNAT --to 192.168.1.17:135
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.17 -p udp --dport 136 -j DNAT --to 192.168.1.17:136
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.17 -p udp --dport 137 -j DNAT --to 192.168.1.17:137
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.17 -p udp --dport 138 -j DNAT --to 192.168.1.17:138
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.17 -p udp --dport 139 -j DNAT --to 192.168.1.17:139
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.17 -p udp --dport 445 -j DNAT --to 192.168.1.17:445
+
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.19 -p tcp --dport 1521 -j DNAT --to 192.168.1.19:1521
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.19 -j DNAT --to 192.168.1.19
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.21 -p tcp --dport 1521 -j DNAT --to 192.168.1.21:1521
+
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.42.131 -j DNAT --to-destination 192.168.1.131
+
+################## Subir Placas
+
+ifup ifcfg-em1:1
+ifup ifcfg-em1:2
+ifup ifcfg-em1:3
+ifup ifcfg-em1:4
+ifup ifcfg-em1:5
+ifup ifcfg-em1:6
+
+
+################## Baixar Placas
+
+ifdown ifcfg-em1:11
+ifdown ifcfg-em1:12
+ifdown ifcfg-em1:13
+ifdown ifcfg-em1:14
+ifdown ifcfg-em1:15
+ifdown ifcfg-em1:16
+############## ROTAS ANTIGAS ###########################################
+
+route add -net 172.16.0.0/24 gw 172.16.12.250
+route add -net 172.29.1.0 netmask 255.255.255.0 gw 172.16.12.250
+
+
+route delete -net 172.16.0.0/24 gw 172.16.12.250
+route delete -net 172.29.1.0 netmask 255.255.255.0 gw 172.16.12.250
+
+
+########################################################################
+
+route add -net 172.16.0.0/24 gw 172.16.42.250
+route add -net 172.29.1.0 netmask 255.255.255.0 gw 172.16.42.250
+
+
+route delete -net 172.16.0.0/24 gw 172.16.42.254
+route delete -net 172.29.1.0 netmask 255.255.255.0 gw 172.16.42.254
+
+
+################## original
+
+
+### MPLS
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 137 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 138 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 139 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 139 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 445 -j ACCEPT
+iptables -I INPUT -p udp -s 172.16.0.0/16 --dport 1521 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 137 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 138 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 139 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 139 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 445 -j ACCEPT
+iptables -I INPUT -p tcp -s 172.16.0.0/16 --dport 1521 -j ACCEPT
+
+iptables -I INPUT -s 172.16.0.0/16 -j ACCEPT
+iptables -I FORWARD -s 172.16.0.0/16 -d 192.168.0.0/16 -j ACCEPT
+iptables -t nat -I POSTROUTING -d 172.16.0.0/16 -j SNAT --to 172.16.12.254
+iptables -t nat -I POSTROUTING -d 172.29.1.0/24 -j SNAT --to 172.16.12.254
+#iptables -t nat -I POSTROUTING -s 172.16.0.0/24 -j SNAT --to 192.168.1.1
+
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.12 -p tcp --dport 135 -j DNAT --to 192.168.1.12:135
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.12 -p tcp --dport 136 -j DNAT --to 192.168.1.12:136
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.12 -p tcp --dport 137 -j DNAT --to 192.168.1.12:137
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.12 -p tcp --dport 138 -j DNAT --to 192.168.1.12:138
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.12 -p tcp --dport 139 -j DNAT --to 192.168.1.12:139
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.12 -p tcp --dport 445 -j DNAT --to 192.168.1.12:445
+
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.17 -p udp --dport 135 -j DNAT --to 192.168.1.17:135
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.17 -p udp --dport 136 -j DNAT --to 192.168.1.17:136
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.17 -p udp --dport 137 -j DNAT --to 192.168.1.17:137
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.17 -p udp --dport 138 -j DNAT --to 192.168.1.17:138
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.17 -p udp --dport 139 -j DNAT --to 192.168.1.17:139
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.17 -p udp --dport 445 -j DNAT --to 192.168.1.17:445
+
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.19 -p tcp --dport 1521 -j DNAT --to 192.168.1.19:1521
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.19 -j DNAT --to 192.168.1.19
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.21 -p tcp --dport 1521 -j DNAT --to 192.168.1.21:1521
+
+iptables -t nat -I PREROUTING -s 172.16.0.2 -d 172.16.12.131 -j DNAT --to-destination 192.168.1.131

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: availabilityrecoveryworker
+  namespace: catalog-integration-dev
+data:
+  Consul__Key: dev/catalog/integrations/availability/recovery
+  ConnectionStrings__Integration: mongodb://aplicIntegrate:someUser@fqdn:27017/CatalogIntegration?authSource=notakey
+  ConnectionStrings__HangFire_Storage:  configmap.yaml: should be well protected

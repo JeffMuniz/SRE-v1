@@ -1,0 +1,652 @@
+###########################################################
+#
+#!/bin/bash
+#
+###########################################################
+#
+# Firewall IS
+#
+###########################################################
+
+### Executa configuracoes iniciais
+#sh /etc/sysconfig/firewall.head
+
+###########################################################
+# Definicoes iptables e interface
+fw=/sbin/iptables
+###########################################################
+
+ip_in=192.168.1.45
+eth_in=eth1
+net_in=192.168.0.0/16
+log_level=warning
+
+###########################################################
+ip_out=10.0.100.14
+eth_out=eth2
+log_level=warning
+
+###########################################################
+#
+###########################################################
+# Hosts internos e Redes internas
+###########################################################
+
+###########################################################
+# Redes Externas
+###########################################################
+
+###########################################################
+# Zerando  Tabelas
+###########################################################
+$fw -F
+$fw -t filter -F
+$fw -t mangle -F
+$fw -t nat -F
+$fw -X
+
+#############################################
+# Criando Tables
+#############################################
+$fw -N F_SSH                                    #22
+$fw -N F_SMTP                                   #25
+$fw -N F_DNS                                    #53
+$fw -N F_HTTP                                   #80
+$fw -N F_LDAP                                   #389
+$fw -N F_HTTPS                                  #443
+$fw -N F_SMB                                    #445 - 139 Samba
+$fw -N F_ORA                                    #1521
+$fw -N F_MYSQL                                  #3306
+$fw -N F_TSERVER                                #3389
+$fw -N F_TSERVER_ACSC                           #3386
+$fw -N F_TSERVER_HYPER_v                        #338
+$fw -N F_GED                                    #3726
+$fw -N F_ICMP                                   #
+$fw -N F_GERAL                                  #controle entre redes e outros
+$fw -N F_TOMCAT                                 #8080
+$fw -N F_CONSOLE                                #104
+$fw -N F_WSUS                                   #8530
+$fw -N F_VNC                                    #5900
+$fw -N F_WEBMIN                                 #10000
+$fw -N F_PACS                                   #8181
+
+#############################################
+# Bloqueio inicial
+#############################################
+$fw -P INPUT ACCEPT
+$fw -P OUTPUT ACCEPT
+$fw -P FORWARD DROP
+$fw -t nat -P PREROUTING ACCEPT
+$fw -t nat -P POSTROUTING ACCEPT
+$fw -t nat -P OUTPUT ACCEPT
+$fw -t mangle -P PREROUTING ACCEPT
+$fw -t mangle -P OUTPUT ACCEPT
+
+#############################################
+# Tabela INPUT
+#############################################
+
+#############################################
+# Liberacoes Gerais
+#############################################
+$fw -A INPUT -i lo -j ACCEPT
+$fw -A INPUT -i eth1 -j ACCEPT
+$fw -A INPUT -s $net_in -j ACCEPT
+$fw -A INPUT -s $intersolution -j ACCEPT
+$fw -A INPUT -s $intersolution2 -j ACCEPT
+$fw -A INPUT -s $intersolution3 -j ACCEPT
+$fw -A INPUT -s 200.141.166.242 -j ACCEPT
+$fw -A INPUT -s 192.168.0.2 -j ACCEPT
+$fw -A INPUT -s 192.168.0.2 -j ACCEPT
+$fw -A INPUT -s $net_equip -j ACCEPT
+$fw -A FORWARD -d $net_equip -j ACCEPT
+
+#############################################
+# Redirecionamentos - INPUT
+#############################################
+$fw -A INPUT -j F_GERAL
+$fw -A FORWARD -p udp -m multiport --dports 67,68 -j DROP
+$fw -A FORWARD -j F_GERAL
+
+#############################################
+# Tabela F_GERAL
+#############################################
+#  Permitir Conexoes Estabelecidas
+#
+$fw -A F_GERAL -m state --state ESTABLISHED,RELATED -j ACCEPT
+$fw -I FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+#############################################
+#
+# Liberacoes totais
+#$fw -A F_GERAL -s $net_in -j ACCEPT
+#$fw -A F_GERAL -d $net_out -j ACCEPT
+$fw -A F_GERAL -s 200.141.166.242 -j ACCEPT
+
+#############################################
+# Redirecionamentos por servico
+#############################################
+$fw -A F_GERAL -p tcp -m multiport      --dport         2200,2204                      -j      F_SSH
+$fw -A F_GERAL -p tcp -m multiport      --dport         25,587,993,110,465,995   -j      F_SMTP
+$fw -A F_GERAL -p udp                   --dport         53                      -j      F_DNS
+$fw -A F_GERAL -p tcp -m multiport      --dport         80,2095,8490,8025,9080,5017,5022  -j      F_HTTP
+$fw -A F_GERAL -p tcp -m multiport      --dport         389,636,3268,3269       -j      F_LDAP
+$fw -A F_GERAL -p tcp                   --dport         443                     -j      F_HTTPS
+$fw -A F_GERAL -p tcp                   --dport         1521                    -j      F_ORA
+$fw -A F_GERAL -p tcp                   --dport         3306                    -j      F_MYSQL
+$fw -A F_GERAL -p tcp                   --dport         3389                    -j      F_TSERVER
+$fw -A F_GERAL -p tcp                   --dport         3386                    -j      F_TSERVER_ACSC
+$fw -A F_GERAL -p tcp                   --dport         33222                   -j      F_TSERVER_HYPER_v
+$fw -A F_GERAL -p tcp                   --dport         3726                    -j      F_GED
+$fw -A F_GERAL -p udp                   --dport         1434                    -j      F_GED
+$fw -A F_GERAL -p tcp -m multiport      --dport         135,139,445             -j      F_SMB
+$fw -A F_GERAL -p udp -m multiport      --dport         135,139,445             -j      F_SMB
+$fw -A F_GERAL -p icmp                                                          -j      F_ICMP
+$fw -A F_GERAL -p tcp                   --dport         8080                    -j      F_TOMCAT
+$fw -A F_GERAL -p tcp                   --dport         104                     -j      F_CONSOLE
+$fw -A F_GERAL -p tcp                   --dport         8530                    -j      F_WSUS
+$fw -A F_GERAL -p tcp                   --dport         5900                    -j      F_VNC
+$fw -A F_GERAL -p tcp                   --dport         10000                    -j      F_WEBMIN
+$fw -A F_GERAL -p tcp -m multiport      --dport         1200,1203,1201,4873,8193        -j      F_PACS
+
+
+#############################################
+# Fim tabela geral
+#  Logando
+#
+#$fw -A F_GERAL -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: Geral - "
+$fw -A F_GERAL -j LOG --log-level 1 --log-prefix "Firewall: Geral - "
+$fw -A F_GERAL -j DROP
+
+#############################################
+# Inicio das cadeias criadas
+#############################################
+#
+############################################
+# Tabela F_WSUS
+#############################################
+#$fw -A F_WSUS -s $net_prados -d $lua -j ACCEPT
+$fw -A F_WSUS -j LOG --log-level 1 --log-prefix "Firewall: WSUS - "
+$fw -A F_WSUS -j DROP
+
+###LIBERA FTP ATIVO####
+iptables -I OUTPUT -p tcp -m multiport --dports 20,21 -j ACCEPT
+iptables -I FORWARD -p tcp -m multiport --dports 20,21 -j ACCEPT
+modprobe ip_nat_ftp
+iptables -I FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+############################################
+# Tabela F_WSUS
+#############################################
+$fw -A F_WEBMIN -s $net_in -j ACCEPT
+$fw -A F_WEBMIN -j LOG --log-level 1 --log-prefix "Firewall: WSUS - "
+$fw -A F_WEBMIN -j DROP
+
+#############################################
+# Tabela F_CONSOLE
+#############################################
+#$fw -A F_CONSOLE -d $pacs -j ACCEPT
+#$fw -A F_CONSOLE -s 10.42.0.88 -d 192.168.198.151 -j ACCEPT
+$fw -A F_CONSOLE -j LOG --log-level 1 --log-prefix "Firewall: CONSOLE - "
+$fw -A F_CONSOLE -j DROP
+
+#############################################
+# Tabela F_SMB
+#############################################
+#$fw -A F_SMB -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: SMB - "
+#$fw -A F_SMB -j LOG --log-level 1 --log-prefix "Firewall: SMB - "
+$fw -A F_SMB -j DROP
+
+#############################################
+# Tabela F_SSH
+#############################################
+$fw -A F_SSH -j ACCEPT
+$fw -A F_SSH -s $intersolution -j ACCEPT
+$fw -A F_SSH -s $intersolution2 -j ACCEPT
+#$fw -A F_SSH -m limit --limit 6/m  --limit-burst 6  -j LOG  --log-level $log_level --log-prefix "Firewall: SSH - "
+$fw -A F_SSH -j LOG --log-level 1 --log-prefix "Firewall: SSH - "
+$fw -A F_SSH -j DROP
+
+#############################################
+# Tabela F_PACS
+#############################################
+$fw -A F_PACS -s $net_in -j ACCEPT
+#$fw -A F_PACS -m limit --limit 6/m  --limit-burst 6  -j LOG  --log-level $log_level --log-prefix "Firewall: PACS - "
+$fw -A F_PACS -j LOG --log-level 1 --log-prefix "Firewall: PACS - "
+$fw -A F_PACS -j DROP
+
+#############################################
+# Tabela F_DNS
+#############################################
+#$fw -A F_DNS -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: DNS - "
+$fw -A F_DNS -s $net_in -j ACCEPT
+$fw -A F_DNS -j LOG --log-level 1 --log-prefix "Firewall: DNS - "
+$fw -A F_DNS -j DROP
+
+#############################################
+# Tabela F_HTTP
+#############################################
+$fw -A F_HTTP -s $net_in -j ACCEPT
+#$fw -A F_HTTP -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: HTTP - "
+$fw -A F_HTTP -j LOG --log-level 1 --log-prefix "Firewall: HTTP - "
+$fw -A F_HTTP -j DROP
+
+#############################################
+# Tabela F_HTTPS
+#############################################
+$fw -A F_HTTPS -s $net_in -j ACCEPT
+#$fw -A F_HTTPS -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: HTTPS - "
+$fw -A F_HTTPS -j LOG --log-level 1 --log-prefix "Firewall: HTTPS - "
+$fw -A F_HTTPS -j DROP
+
+#############################################
+# Tabela F_MYSQL
+#############################################
+#$fw -A F_MYSQL -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: MYSQL - "
+$fw -A F_MYSQL -j LOG --log-level 1 --log-prefix "Firewall: MYSQL - "
+$fw -A F_MYSQL -j DROP
+
+#############################################
+# Tabela F_ORA
+#############################################
+$fw -A F_ORA -i eth0 -j ACCEPT
+#$fw -A F_ORA -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: ORACLE - "
+$fw -A F_ORA -j LOG --log-level 1 --log-prefix "Firewall: ORACLE - "
+$fw -A F_ORA -j DROP
+
+#############################################
+# Tabela F_TSERVER
+#############################################
+#$fw -A F_TSERVER -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: TSERVER - "
+$fw -A F_TSERVER -s $net_in -j ACCEPT
+$fw -A F_TSERVER -j LOG --log-level 1 --log-prefix "Firewall: TSERVER - "
+$fw -A F_TSERVER -j DROP
+
+$fw -A F_TSERVER_ACSC -s $net_in -j ACCEPT
+$fw -A F_TSERVER_ACSC -j LOG --log-level 1 --log-prefix "Firewall: TSERVER - "
+$fw -A F_TSERVER_ACSC -j DROP
+
+$fw -A F_TSERVER_HYPER_v -s $net_in -j ACCEPT
+$fw -A F_TSERVER_HYPER_v -j LOG --log-level 1 --log-prefix "Firewall: TSERVER - "
+$fw -A F_TSERVER_HYPER_v -j DROP
+
+#############################################
+# Tabela F_TOMCAT
+#############################################
+#$fw -A F_TOMCAT -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: TOMCAT - "
+$fw -A F_TOMCAT -j LOG --log-level 1 --log-prefix "Firewall: TOMCAT - "
+$fw -A F_TOMCAT -j DROP
+
+#############################################
+# Tabela F_SMTP
+#############################################
+$fw -A F_SMTP -s $net_in  -j ACCEPT
+#$fw -A F_SMTP -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: SMTP - "
+$fw -A F_SMTP -j LOG --log-level 1 --log-prefix "Firewall: SMTP - "
+$fw -A F_SMTP -j DROP
+
+#############################################
+# Tabela F_LDAP
+#############################################
+#$fw -A F_LDAP -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: LDAP - "
+$fw -A F_LDAP -j LOG --log-level 1 --log-prefix "Firewall: LDAP - "
+$fw -A F_LDAP -j DROP
+
+#############################################
+# Tabela F_ICMP
+#############################################
+
+$fw -A F_ICMP -p icmp --icmp-type echo-request -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type echo-reply -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type destination-unreachable      -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   network-unreachable        -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   host-unreachable           -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   protocol-unreachable       -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   port-unreachable           -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   source-route-failed         -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   network-unknown            -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   host-unknown               -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   network-prohibited          -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   host-prohibited            -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   TOS-network-unreachable    -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   TOS-host-unreachable       -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   communication-prohibited    -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type time-exceeded                -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   ttl-zero-during-transit     -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   ttl-zero-during-reassembly  -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type parameter-problem             -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   ip-header-bad               -m limit --limit 1/s -j ACCEPT
+$fw -A F_ICMP -p icmp --icmp-type   required-option-missing     -m limit --limit 1/s -j ACCEPT
+#$fw -A F_ICMP -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: ICMP - "
+$fw -A F_ICMP -j LOG --log-level 1 --log-prefix "Firewall: ICMP - "
+$fw -A F_ICMP -j DROP
+
+#############################################
+# Tabela F_VNC
+#############################################
+#$fw -A F_VNC -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: VNC - "
+$fw -A F_VNC -j LOG --log-level 1 --log-prefix "Firewall: VNC - "
+$fw -A F_VNC -j DROP
+
+#############################################
+# Tabela F_GED
+#############################################
+#$fw -A F_GED -m limit --limit 6/m  --limit-burst 6 -j LOG  --log-level $log_level --log-prefix "Firewall: GED - "
+$fw -A F_GED -j LOG --log-level 1 --log-prefix "Firewall: GED - "
+$fw -A F_GED -j DROP
+
+##############################
+
+#### REDIRECIONAMENTO DE PORTAS PARA CONEXAO ####
+
+
+#### CONEXAO WTS - SERVIDOR DE APLICACAO SOULMV
+#iptables -I FORWARD -p tcp --dport 3389 -d 10.42.111.12 -j ACCEPT
+#iptables -t nat -I PREROUTING -p tcp --dport 3389 -d $ip_out -j DNAT --to 10.42.111.12:3389
+#iptables -t nat -I PREROUTING -p tcp --dport 3389 -d $ip_out_tmc -j DNAT --to 10.42.111.12:3389
+#iptables -I FORWARD -p tcp -s 10.42.111.12 -j ACCEPT
+
+#### CONEXAO WTS - DESKTOP TECNOLOGIA DA INFORMACAO
+#iptables -I FORWARD -p tcp --dport 3389 -d 10.42.111.200 -j ACCEPT
+#iptables -t nat -I PREROUTING -p tcp --dport 3390 -d $ip_out -j DNAT --to 10.42.111.200:3389
+#iptables -t nat -I PREROUTING -p tcp --dport 3390 -d $ip_out_tmc -j DNAT --to 10.42.111.200:3389
+
+#iptables -t nat -I PREROUTING -p tcp --dport 80 -d $ip_out_tmc -j DNAT --to 10.42.111.12:80
+#iptables -t nat -I PREROUTING -p tcp --dport 80 -d $ip_out -j DNAT --to 10.42.111.12:80
+#iptables -t nat -I PREROUTING -p tcp --dport 8500 -d $ip_out_tmc -j DNAT --to 10.42.111.12:8500
+#iptables -t nat -I PREROUTING -p tcp --dport 8500 -d $ip_out -j DNAT --to 10.42.111.12:8500
+#iptables -t nat -I POSTROUTING -d 10.42.111.12 -j SNAT --to $ip_out
+#iptables -t nat -I POSTROUTING -s 10.42.111.12 -j SNAT --to $ip_out
+
+#### NCI
+#iptables -I FORWARD -p tcp -d 10.42.112.134 -j ACCEPT
+#iptables -t nat -I PREROUTING -p tcp --dport 9095 -d $ip_out -j DNAT --to 10.42.112.134:9095
+#iptables -t nat -I POSTROUTING -d 10.42.112.134 -j SNAT --to $ip_in
+
+
+#### NCI
+#iptables -I FORWARD -p tcp -d 10.42.112.90 -j ACCEPT
+#iptables -t nat -I PREROUTING -p tcp --dport 8081 -d $ip_out -j DNAT --to 10.42.112.90:8081
+#iptables -t nat -I PREROUTING -p tcp --dport 1201 -d $ip_out -j DNAT --to 10.42.112.90:1201
+#iptables -t nat -I PREROUTING -p tcp --dport 1203 -d $ip_out -j DNAT --to 10.42.112.90:1203
+#iptables -t nat -I PREROUTING -p tcp --dport 1200 -d $ip_out -j DNAT --to 10.42.112.90:1200
+#iptables -t nat -I PREROUTING -p tcp --dport 4873 -d $ip_out -j DNAT --to 10.42.112.90:4873
+#iptables -t nat -I PREROUTING -p tcp --dport 8193 -d $ip_out -j DNAT --to 10.42.112.90:8193
+#iptables -t nat -I POSTROUTING -d 10.42.112.90 -j SNAT --to $ip_in
+
+
+
+
+##REGRAS TESTE VIDEO CONFERENCIA
+#iptables -I FORWARD -d 192.168.1.40 -j ACCEPT
+#$iptables -I FORWARD -d 177.189.206.232 -j ACCEPT
+#iptables -I  INPUT -d 192.168.1.40 -j ACCEPT
+#iptables -I  INPUT -d 177.189.206.232 -j ACCEPT
+#iptables -I FORWARD -s 192.168.1.40 -j ACCEPT
+#iptables -I  INPUT -s 192.168.1.40 -j ACCEPT
+#iptables -t mangle -I FORWARD -d 192.168.1.40 -j ACCEPT
+#iptables -t nat -I PREROUTING -p tcp --dport 3000 -d 177.189.206.232 -j DNAT --to 192.168.1.40
+#iptables -t nat -I PREROUTING -p tcp --dport 2000 -d 177.189.206.232 -j DNAT --to 192.168.1.40
+
+####LIBERA FTP####
+iptables -I INPUT -p tcp -s 200.223.19.136 -d $ip_out --dport 21 -j ACCEPT
+iptables -I INPUT -p tcp -s 200.223.19.136 -d $ip_out_tmc --dport 21 -j ACCEPT
+iptables -I OUTPUT -p tcp -s $net_in -d 200.223.19.136 --dport 21 -j ACCEPT
+iptables -I FORWARD -p tcp -s $net_in -d 200.223.19.136 --dport 21 -j ACCEPT
+iptables -t nat -I POSTROUTING -p tcp -s $net_in -d 200.223.19.136 --dport 21 -j ACCEPT
+
+###LIBERACAO TICKET 41475##
+iptables -A INPUT -p tcp --dport 9090:9090 -j ACCEPT
+iptables -I OUTPUT -p tcp -m multiport --dports 9090:9099 -j ACCEPT
+iptables -I FORWARD -p tcp -m multiport --dports 9090:9099 -j ACCEPT
+iptables -t nat -I POSTROUTING -p tcp -m multiport --dports 9090:9099 -j ACCEPT
+
+iptables -I FORWARD -p udp --dport 1194 -j ACCEPT
+iptables -I INPUT -p udp --dport 1194 -j ACCEPT
+
+#####BLOQUEIA INTERNET
+
+iptables -t nat -I PREROUTING -p tcp --dport 80 -s 192.168.0.0/16 -j REDIRECT --to 3128
+
+
+### SERVIDORES
+#iptables -I FORWARD -d 10.42.111.12 -j ACCEPT
+#iptables -t nat -I PREROUTING -d 10.42.111.12 -j ACCEPT
+#iptables -t mangle -I PREROUTING -d 10.42.111.12 -j MARK --set-mark 2
+#iptables -t mangle -I  OUTPUT  -d 10.42.111.12 -j MARK --set-mark 2
+#iptables -t mangle -I FORWARD -d 10.42.111.12 -j MARK --set-mark 2
+#iptables -t mangle -I POSTROUTING -d 10.42.111.12 -j MARK --set-mark 2
+
+#iptables -I FORWARD -s 10.42.112.80 -j ACCEPT
+#iptables -t nat -I PREROUTING -s 10.42.112.80 -j ACCEPT
+#iptables -t mangle -I PREROUTING -s 10.42.112.80 -j MARK --set-mark 2
+#iptables -t mangle -I  OUTPUT  -s 10.42.112.80 -j MARK --set-mark 2
+#iptables -t mangle -I FORWARD -s 10.42.112.80 -j MARK --set-mark 2
+#iptables -t mangle -I POSTROUTING -s 10.42.112.80 -j MARK --set-mark 2
+
+#iptables -I FORWARD -s 10.42.112.70 -j ACCEPT#
+#iptables -t nat -I PREROUTING -s 10.42.112.70 -j ACCEPT
+#iptables -t mangle -I PREROUTING -s 10.42.112.70 -j MARK --set-mark 2
+#iptables -t mangle -I  OUTPUT  -s 10.42.112.70 -j MARK --set-mark 2
+#iptables -t mangle -I FORWARD -s 10.42.112.70 -j MARK --set-mark 2
+#iptables -t mangle -I POSTROUTING -s 10.42.112.70 -j MARK --set-mark 2
+#
+#
+####
+iptables -I FORWARD -d 200.152.0.0/16 -j ACCEPT
+iptables -t nat -I PREROUTING -d 200.152.0.0/16 -j ACCEPT
+iptables -t mangle -I PREROUTING -d 200.152.0.0/16 -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -d 200.152.0.0/16 -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -d 200.152.0.0/16 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 200.152.0.0/16 -j MARK --set-mark 2
+
+###RECEITANET
+
+iptables -I FORWARD -d 161.148.0.0/16 -j ACCEPT
+iptables -I FORWARD -d 189.9.71.0/24 -j ACCEPT
+iptables -I FORWARD -d 200.198.239.0/24 -j ACCEPT
+iptables -I FORWARD -d 161.148.231.0/16 -j ACCEPT
+
+###DATASSU
+
+iptables -I FORWARD -d 200.160.124.0/24 -j ACCEPT
+iptables -t nat -I PREROUTING -d 200.160.124.0/24 -j ACCEPT
+iptables -t mangle -I PREROUTING -d 200.160.124.0/24 -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -d 200.160.124.0/24 -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -d 200.160.124.0/24 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 200.160.124.0/24 -j MARK --set-mark 2
+
+
+iptables -I FORWARD -d 189.28.143.0/24 -j ACCEPT
+iptables -t nat -I PREROUTING -d 189.28.143.0/24 -j ACCEPT
+iptables -t mangle -I PREROUTING -d 189.28.143.0/24 -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -d 189.28.143.0/24 -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -d 189.28.143.0/24 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 189.28.143.0/24 -j MARK --set-mark 2
+
+iptables -I FORWARD -d 189.39.119.0/24 -j ACCEPT
+iptables -t nat -I PREROUTING -d 189.39.119.0/24 -j ACCEPT
+iptables -t mangle -I PREROUTING -d 189.39.119.0/24 -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -d 189.39.119.0/24 -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -d 189.39.119.0/24 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 189.39.119.0/24 -j MARK --set-mark 2
+
+#######BLOQUEIOS SITES HTTPS##############
+
+echo "Carregando bloqueios... "
+
+# BLOQUEIO WHATSAPP WEB
+iptables -I FORWARD -i eth1 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I FORWARD -d 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I FORWARD -s 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I OUTPUT -d 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I OUTPUT -s 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I INPUT -d 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I INPUT -s 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -t mangle -I PREROUTING -s 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+
+# BLOQUEIO IGMAIL
+#iptables -t mangle -I PREROUTING -s 192.168.0.0/16 -m string --algo bm --string "login.ig.com.br" -j DROP
+
+# BLOQUEIO YAHOO
+#iptables -t mangle -I PREROUTING -s 192.168.0.0/16 -m string --algo bm --string "br.yahoo.com" -j DROP
+
+# BLOQUEIO FACEBOOK
+iptables -I FORWARD -i eth1 -m string --algo bm --string "facebook.com" -j DROP
+iptables -I FORWARD -d 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j DROP
+iptables -I FORWARD -s 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j DROP
+iptables -I OUTPUT -d 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j DROP
+iptables -I OUTPUT -s 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j DROP
+iptables -I INPUT -d 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j DROP
+iptables -I INPUT -s 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j DROP
+iptables -t mangle -I PREROUTING -s 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j DROP
+
+# LIBERACAO FACEBOOK
+MAQ=" 10.0.100.14 "
+for i in `echo $MAQ`; do
+        iptables -I FORWARD -i eth1 -m string --algo bm --string "facebook.com" -j ACCEPT
+        iptables -I FORWARD -d 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j ACCEPT
+        iptables -I FORWARD -s 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j ACCEPT
+        iptables -I OUTPUT -d 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j ACCEPT
+        iptables -I OUTPUT -s 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j ACCEPT
+        iptables -I INPUT -d 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j ACCEPT
+        iptables -I INPUT -s 192.168.0.0/16 -m string --algo bm --string "facebook.com" -j ACCEPT
+        iptables -t mangle -I PREROUTING -s $i -m string --algo bm --string "facebook.com" -j ACCEPT
+done
+
+# BLOQUEIO YOUTUBE
+iptables -I FORWARD -i eth1 -m string --algo bm --string "youtube.com" -j DROP
+iptables -I FORWARD -d 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j DROP
+iptables -I FORWARD -s 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j DROP
+iptables -I OUTPUT -d 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j DROP
+iptables -I OUTPUT -s 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j DROP
+iptables -I INPUT -d 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j DROP
+iptables -I INPUT -s 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j DROP
+iptables -t mangle -I PREROUTING -s 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j DROP
+
+# LIBERACAO YOUTUBE
+MAQ=" 10.0.100.14 "
+for i in `echo $MAQ`; do
+        iptables -I FORWARD -i eth1 -m string --algo bm --string "youtube.com" -j ACCEPT
+        iptables -I FORWARD -d 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j ACCEPT
+        iptables -I FORWARD -s 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j ACCEPT
+        iptables -I OUTPUT -d 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j ACCEPT
+        iptables -I OUTPUT -s 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j ACCEPT
+        iptables -I INPUT -d 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j ACCEPT
+        iptables -I INPUT -s 192.168.0.0/16 -m string --algo bm --string "youtube.com" -j ACCEPT
+        iptables -t mangle -I PREROUTING -s $i -m string --algo bm --string "youtube.com" -j ACCEPT
+done
+
+#iptables -A FORWARD -m string --algo bm --string "facebook.com" -j DROP
+#iptables -A FORWARD -m string --algo bm --string "youtube.com" -j DROP
+#iptables -A OUTPUT -m string --algo bm --string "facebook.com" -j DROP
+#iptables -A OUTPUT -m string --algo bm --string "youtube.com" -j DROP
+
+## LIBERA IPS ##
+##FAVOR não REMOVER as ASPAS.
+
+echo "Liberando ips...."
+
+IP=" 192.168.1.45 "
+
+
+
+for i in `echo $IP`; do
+iptables -I FORWARD -s $i -j ACCEPT
+iptables -t nat -I PREROUTING -s $i -j ACCEPT
+iptables -t mangle -I PREROUTING -s $i -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -s $i -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -s $i -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -s $i -j MARK --set-mark 2
+#iptables -I FORWARD -s $i -m string --algo bm --string "facebook.com" -j ACCEPT
+#iptables -I FORWARD -s $i -m string --algo bm --string "youtube.com" -j ACCEPT
+#iptables -I OUTPUT -s $i -m string --algo bm --string "facebook.com" -j ACCEPT
+#iptables -I OUTPUT -s $i -m string --algo bm --string "youtube.com" -j ACCEPT
+
+echo "Liberado: $i"
+done
+#
+
+
+echo "Regras carregadas [OK]"
+
+
+# BLOQUEIO WHATSAPP WEB
+iptables -I FORWARD -i eth2 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I FORWARD -d 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I FORWARD -s 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I OUTPUT -d 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I OUTPUT -s 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I INPUT -d 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -I INPUT -s 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+iptables -t mangle -I PREROUTING -s 192.168.0.0/16 -m string --algo bm --string "web.whatsapp.com" -j DROP
+
+# BLOQUEIO SKYPE WEB
+iptables -I FORWARD -i eth2 -m string --algo bm --string "skype" -j DROP
+iptables -I FORWARD -d 192.168.0.0/16 -m string --algo bm --string "skype" -j DROP
+iptables -I FORWARD -s 192.168.0.0/16 -m string --algo bm --string "skype" -j DROP
+iptables -I OUTPUT -d 192.168.0.0/16 -m string --algo bm --string "skype" -j DROP
+iptables -I OUTPUT -s 10.42.0113.0/24 -m string --algo bm --string "skype" -j DROP
+iptables -I INPUT -d 192.168.0.0/16 -m string --algo bm --string "skype" -j DROP
+iptables -I INPUT -s 192.168.0.0/16 -m string --algo bm --string "skype" -j DROP
+iptables -t mangle -I PREROUTING -s 192.168.0.0/16 -m string --algo bm --string "skype" -j DROP
+
+
+#iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+#
+#iptables -I FORWARD -p udp --dport 1194 -j ACCEPT
+#iptables -I INPUT -p udp --dport 1194 -j ACCEPT
+
+
+#Liberação Caixa CAT
+
+#### IP CAIXA CAT
+
+iptables -t nat -I PREROUTING -d 200.201.174.0/16 -j ACCEPT
+iptables -I FORWARD -d 200.201.174.0/16 -j ACCEPT
+
+iptables -I FORWARD -p tcp -d 200.201.174.207 --dport 80 -j ACCEPT
+iptables -I FORWARD -p tcp -d 200.201.174.204 --dport 80 -j ACCEPT
+iptables -I FORWARD -p tcp -d 200.201.174.204 --dport 2631 -j ACCEPT
+
+iptables -t mangle -I FORWARD -d 200.201.174.0/16 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 200.201.174.0/16 -j MARK --set-mark 2
+
+
+#########################################################################################################################
+
+###HOMOLOGNET
+iptables -I FORWARD -d 200.198.216.106 -j ACCEPT
+iptables -t nat -I PREROUTING -d 200.198.216.106 -j ACCEPT
+iptables -t mangle -I PREROUTING -d 200.198.216.106 -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -d 200.198.216.106 -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -d 200.198.216.106 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 200.198.216.106 -j MARK --set-mark 2
+
+iptables -I FORWARD -d 177.43.84.50 -j ACCEPT
+iptables -t nat -I PREROUTING -d 177.43.84.50 -j ACCEPT
+iptables -t mangle -I PREROUTING -d 177.43.84.50 -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -d 177.43.84.50 -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -d 177.43.84.50 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 177.43.84.50 -j MARK --set-mark 2
+
+iptables -I FORWARD -s 10.42.113.92 -d 200.98.148.139 -p udp --dport 7980 -j ACCEPT
+iptables -I FORWARD -s 10.42.113.92 -d 200.98.148.139 -p tcp --dport 7980 -j ACCEPT
+iptables -I FORWARD -s 200.98.148.139 -d 10.42.113.92 -p tcp --dport 7980 -j ACCEPT
+
+iptables -I FORWARD -d 200.160.124.74 -j ACCEPT
+iptables -t nat -I PREROUTING -d 200.160.124.74 -j ACCEPT
+iptables -t mangle -I PREROUTING -d 200.160.124.74 -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -d 200.160.124.74 -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -d 200.160.124.74 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 200.160.124.74 -j MARK --set-mark 2
+
+iptables -I FORWARD -d 200.160.124.94 -j ACCEPT
+iptables -t nat -I PREROUTING -d 200.160.124.94 -j ACCEPT
+iptables -t mangle -I PREROUTING -d 200.160.124.94 -j MARK --set-mark 2
+iptables -t mangle -I  OUTPUT  -d 200.160.124.94 -j MARK --set-mark 2
+iptables -t mangle -I FORWARD -d 200.160.124.94 -j MARK --set-mark 2
+iptables -t mangle -I POSTROUTING -d 200.160.124.94 -j MARK --set-mark 2
+
+iptables -I FORWARD -d 200.198.216.106 -j ACCEPT
+iptables -I FORWARD -d 177.43.84.50 -j ACCEPT

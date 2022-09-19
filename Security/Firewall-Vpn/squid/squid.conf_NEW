@@ -1,0 +1,372 @@
+#http_port 3128 transparent
+http_port 3128
+icp_port 0
+
+#debug_options ALL,1 28,9
+hierarchy_stoplist cgi-bin ?
+
+acl QUERY urlpath_regex cgi-bin \?
+no_cache deny QUERY
+
+cache_mem 256 MB
+cache_swap_low 90
+cache_swap_high 95
+
+maximum_object_size 8192 KB
+ipcache_size 1024
+ipcache_low 90
+ipcache_high 95
+fqdncache_size 1024
+
+#server_persistent_connections off enabled
+
+#cache_replacement_policy lru
+memory_replacement_policy lru
+
+#cache_dir ufs /var/spool/squid 300 16 1512
+cache_dir diskd /var/spool/squid 2048 16 256 Q1=72 Q2=64
+cache_log /var/log/squid/cache.log
+cache_access_log /var/log/squid/access.log
+cache_store_log none
+
+error_directory /etc/squid/errors
+
+
+half_closed_clients off
+memory_pools off
+
+## Controle de banda - Fonte: http://www.gdhpress.com.br/servidores/leia/index.p                                                                                        hp?p=cap2-15
+
+## Auth LDAP - Inicio do Processo de Autenticacao
+auth_param basic program /usr/lib/squid/squid_ldap_auth -d -R -c 10 -t 9999 -s sub -u sAMAccountName -b "DC=ameitapevi,DC=local" -D "CN=LDAPConnect,OU=Internet,DC=ameitapevi,DC=local" -w "ldapame" -f "sAMAccountName=%s" -h 10.0.20.15 -p 389 -v 3
+auth_param basic realm Proxy AME Itapevi - INFORME SUA SENHA WINDOWS
+#Authentication required
+auth_param basic children 10
+auth_param basic credentialsttl 1 minutes
+auth_param basic casesensitive off
+unlinkd_program /usr/lib/squid/unlinkd
+mime_table /etc/squid/mime.conf
+pid_filename /var/run/squid.pid
+
+#emulate_httpd_log on
+external_acl_type AME_NTGROUP ttl=0 negative_ttl=0 children=10 cache=0 protocol=3.0 %LOGIN /usr/lib/squid/squid_ldap_group -d -R -b "DC=ameitapevi,DC=local" -D "CN=LDAPConnect,OU=Internet,DC=ameitapevi,DC=local" -w "ldapame" -f "(&(objectclass=person)(sAMAccountName=%v)(memberof=CN=%a,OU=Internet,DC=ameitapevi,DC=local))" -h 10.0.20.15 -v 3
+
+
+acl banco dstdomain caixa.gov.br
+acl banco dstdomain acsc.org.br
+acl banco dstdomain onlinepesquisa.com
+acl banco dstdomain medicinanet.com.br
+acl banco dstdomain congregar.acsc.org.br
+acl banco dstdomain bankline.itau.com.br
+acl banco dstdomain itau.com.br
+always_direct allow banco
+
+acl drogaria dstdomain 38.113.165.0/24
+acl drogaria dstdomain 38.99.185.0/24
+
+acl numeric_IPs url_regex -i ^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+):443
+# Regra
+http_access allow numeric_IPs
+
+##TESTEDOWNLOAD
+acl site_sih dst 189.28.143.0/24
+#http_access allow site_sih
+
+
+
+##### Inicio de definicao de ACLs #####
+### ACLs
+
+acl manager proto cache_object
+acl localhost src 127.0.0.1
+
+### SQStat
+
+acl manager proto cache_object
+acl webserver src 10.0.20.2/255.255.255.255
+#http_access allow manager webserver 
+#http_access deny manager
+
+
+#ACLs DEFAULT PORTS
+acl Safe_ports port 2631
+acl Safe_ports port 3001
+acl Safe_ports port 3000
+acl Safe_ports port 21
+acl Safe_ports port 20
+acl Safe_ports port 5000-5500
+acl Safe_ports port 80
+acl Safe_ports port 81
+acl Safe_ports port 82
+acl Safe_ports port 443
+acl Safe_ports port 465
+acl Safe_ports port 587
+acl Safe_ports port 993
+acl Safe_ports port 995
+acl Safe_ports port 4000
+acl Safe_ports port 4002
+acl Safe_ports port 4500
+acl Safe_ports port 8080
+acl Safe_ports port 8082
+acl Safe_ports port 8085
+acl Safe_ports port 8443
+acl Safe_ports port 8900
+acl Safe_ports port 8090
+acl Safe_ports port 8180
+acl Safe_ports port 7080
+acl Safe_ports port 8880
+acl Safe_ports port 2038
+acl Safe_ports port 9090
+acl Safe_ports port 8081
+acl Safe_ports port 5656
+acl Safe_ports port 3322
+acl Safe_ports port 7000
+acl Safe_ports port 1188
+acl Safe_ports port 1050
+acl Safe_ports port 5017
+acl Safe_ports port 5022
+acl Safe_ports port 10000
+acl Safe_ports port 8989
+acl all src all
+#acl bloqueados url_regex -i "/etc/squid/bloqueados"
+
+# alterado em 06-03-15
+#acl LIBERACAO_TOTAL src "/etc/squid/ip_liberado"
+
+
+acl rej_URL_AVI url_regex \.avi$
+acl rej_URL_AVI url_regex \.mkv$
+acl rej_URL_AVI url_regex \.vob$
+acl rej_URL_AVI url_regex \.rmvb$
+acl rej_URL_AVI url_regex \.mpg$
+acl rej_URL_AVI url_regex \.wmv$
+acl rej_URL_AVI url_regex \.asf$
+acl rej_URL_AVI url_regex \.mov$
+acl rej_URL_AVI url_regex \.com$
+acl rej_URL_AVI url_regex \.nrg$
+acl rej_URL_AVI url_regex \.cmd$
+acl rej_URL_AVI url_regex \.bat$
+acl rej_URL_AVI url_regex \.iso$
+acl rej_URL_AVI url_regex \.mpeg$
+acl rej_URL_EXE url_regex \.exe$
+acl rej_URL_MP3 url_regex \.mp3$
+acl rej_URL_WMA url_regex \.wma$
+acl rej_URL_RAR url_regex \.rar$
+acl rej_URL_AVI url_regex \.src$
+
+acl sites_liberados url_regex -i "/etc/squid/sites_liberados"
+#acl acesso_youtube url_regex -i "/etc/squid/regras_ame/acesso_youtube.url"
+
+# alterado em 06-3-15
+# acl ips_liberados src "/etc/squid/ips_liberados"
+
+
+#ROTEADORES WIRELESS
+#acl wireless src 10.0.20.36 10.0.20.37
+#acl acesso_wireless url_regex "/etc/squid/regras_ame/acesso_wireless.url"
+
+
+# ACLs SECURE PORTS
+acl SSL_ports port 10000 8443 443 10106 21 20
+acl CONNECT method CONNECT
+acl rej_URL_AVI url_regex \.flv$
+acl yahoo url_regex yahoo
+acl convenios url_regex "/etc/squid/sites_convenios"
+acl ip_convenios src "/etc/squid/ip_acesso_convenio"
+#acl ftp_senior url_regex senior
+##CAT 4.0
+acl cat_caixa dst "/etc/squid/caixa_cat"
+acl ftp_senior dstdomain ftp.acsc.org.br/filantropia
+acl ftp_seniormpls dstdomain ftpseniormpls.acsc.org.br
+acl fidi url_regex "/etc/squid/fidi"
+acl fidi2 dstdomain fidi.local
+acl bradesco dstdomain www.ib2.bradesco.com.br
+
+ftp_passive on
+acl FTP proto FTP
+always_direct allow FTP
+
+########
+# ACL
+##### Fim da definicao de ACLs
+### ACCESS PORTS
+#http_access allow ftp_acsc2
+#http_access allow ftp_acsc
+always_direct allow fidi2
+http_access allow fidi
+always_direct allow ftp_senior
+always_direct allow ftp_seniormpls
+http_access allow ftp_senior
+http_access allow cat_caixa
+http_access allow bradesco
+http_access allow ftp_senior
+
+
+
+#########DROGARAIA
+http_access allow CONNECT drogaria
+
+#ROTEADORES WIRELESS
+#http_access deny wireless acesso_wireless
+#http_access allow wireless
+
+http_access allow manager localhost
+http_access deny manager
+http_access deny !Safe_ports
+http_access deny CONNECT !SSL_Ports
+http_access deny localhost
+http_access allow CONNECT banco
+
+
+#acl CONNECT method CONNECT
+#acl httpsfail dst www.facebook.com
+#acl httpsfail dst www.orkut.com
+#http_access allow httpsfail CONNECT
+
+
+cache_effective_user squid
+cache_effective_group squid
+
+visible_hostname proxy.ame.com
+unique_hostname proxy.ame.com
+append_domain .ame.com
+
+#always_direct allow internal-domains
+
+#header_access via deny all
+#header_access X-Forwarded-For deny all
+
+## Block
+#http_access deny all
+
+#http_access allow convenios
+acl cardio dst 186.202.132.169
+
+acl dataprev dst 200.15remoteShellVulner2.148
+###############################################################################################3
+
+
+
+### ACLs AD
+
+acl NIVEL1 external AME_NTGROUP Nivel1
+acl NIVEL2 external AME_NTGROUP Nivel2
+acl NIVEL3 external AME_NTGROUP Nivel3
+
+### ACLs  - Url_regex
+
+
+acl liberadoAPP url_regex -i "/etc/squid/regras_ame2/liberados_app"
+acl Safe_Ports port 17990-17995
+acl Safe_Ports port 50000-65535
+
+acl kaspersky url_regex -i kaspersky
+acl kaspersky url_regex -i kaspersky.com
+acl kaspersky url_regex -i updaters/updater.xml
+acl kaspersky url_regex -i diffs
+
+
+http_access deny kaspersky
+http_access allow CONNECT liberadoAPP
+http_access allow liberadoAPP
+http_reply_access allow liberadoAPP
+
+#Usuarios Acesso Lista Sites
+http_access allow CONNECT Safe_ports
+
+#############################################################################################################################################
+#INICIO DAS ACLS
+
+#REGRA 7 - Listas de sites, cadastrados para navegar no proxy
+acl SITES_PORNO url_regex -i "/etc/squid/regras_ame2/sites_porn.url"
+
+#REGRA 9 - Listas de sites, cadastrados para navegar no proxy
+
+acl SITES_NIVEL1 url_regex -i "/etc/squid/regras_ame2/sites_nivel1.url"
+
+acl SITES_NIVEL2 url_regex -i "/etc/squid/regras_ame2/sites_nivel2.url"
+
+acl SITES_NIVEL3 url_regex -i "/etc/squid/regras_ame2/sites_nivel3.url"
+
+
+###
+acl office365 dstdomain "/etc/squid/regras_ame2/office365.domain"
+
+################################################
+acl fb dstdomain .facebook.com
+acl fb dstdomain .instagram.com
+acl fb dstdomain .twitter.com
+acl fb dstdomain .twimg.com
+acl fb dstdomain .akamaihd.net
+acl fb dstdomain .facebook.net
+acl fb dstdomain .globalsign.com
+
+acl glg dstdomain .google-analytics.com
+acl glg dstdomain .googlevideo.com
+acl glg dstdomain .globalsign.net
+acl glg dstdomain .googleapis.com
+acl glg dstdomain .youtube.com
+
+acl mail dstdomain .live.com
+acl mail dstdomain .gmail.com
+
+acl inst dstdomain .gov.br
+
+######################### INICIO DAS REGRAS #############################################################
+#Não alterar a ordem das regras 
+
+################REMOVER APOS MIGRAR####################
+
+##################################
+#Acesso Office365
+#################################
+http_reply_access allow office365
+http_access allow CONNECT office365
+###################################
+http_access deny SITES_PORNO
+##############################################
+#Acessos SSL
+
+##############################################
+
+###########################################################
+http_access allow NIVEL3 !SITES_NIVEL3
+http_reply_access allow NIVEL3 fb
+http_access allow CONNECT NIVEL3 fb
+http_reply_access allow NIVEL3 mail
+http_access allow CONNECT NIVEL3 mail
+##########################################################
+
+##########################################################
+http_reply_access deny fb
+http_access deny CONNECT fb
+###########################################################
+
+##########################################################
+http_access allow NIVEL2 !SITES_NIVEL2
+http_reply_access allow NIVEL2 mail
+http_access allow CONNECT NIVEL2 mail
+
+#######################################
+
+
+##########################################################
+http_access allow NIVEL1 !SITES_NIVEL1
+
+
+deny_info http://www.acsc.org.br NIVEL3
+deny_info http://www.acsc.org.br NIVEL2
+deny_info http://www.acsc.org.br NIVEL1
+
+#############################################################################################################################################
+
+http_access allow manager localhost
+http_access deny manager
+#http_access deny !Safe_ports
+#http_access allow CONNECT SSL_ports
+
+http_access deny all 
+icp_access allow all
+cache_mgr postmaster
+#error_directory /usr/share/squid/errors/Portuguese
+forwarded_for on

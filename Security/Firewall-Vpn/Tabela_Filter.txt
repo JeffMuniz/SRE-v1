@@ -1,0 +1,208 @@
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  10.189.14.20         anywhere            
+ACCEPT     all  --  10.189.14.200        anywhere            
+ACCEPT     all  --  mail.acsc.org.br     anywhere            
+ACCEPT     all  --  anywhere             anywhere            
+ACCEPT     all  --  anywhere             anywhere            
+F_GERAL    all  --  anywhere             anywhere            
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  10.189.14.200        anywhere            
+ACCEPT     all  --  10.189.14.20         anywhere            
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+ACCEPT     all  --  anywhere             10.189.14.201       
+ACCEPT     all  --  anywhere             10.189.14.201       
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+ACCEPT     all  --  anywhere             10.189.14.30        
+ACCEPT     all  --  anywhere             10.189.14.30        
+ACCEPT     all  --  anywhere             10.189.14.200       
+ACCEPT     all  --  anywhere             10.189.14.20        
+ACCEPT     all  --  anywhere             10.189.14.25        
+ACCEPT     all  --  anywhere             10.189.14.21        
+ACCEPT     all  --  anywhere             10.189.14.21        
+ACCEPT     all  --  10.19.0.32           anywhere            
+ACCEPT     all  --  10.19.0.31           anywhere            
+ACCEPT     all  --  10.19.0.30           anywhere            
+ACCEPT     all  --  10.19.0.29           anywhere            
+ACCEPT     all  --  10.19.0.28           anywhere            
+ACCEPT     all  --  10.19.0.27           anywhere            
+ACCEPT     all  --  10.19.0.26           anywhere            
+ACCEPT     all  --  10.19.0.25           anywhere            
+ACCEPT     all  --  10.19.0.24           anywhere            
+ACCEPT     all  --  10.19.0.23           anywhere            
+ACCEPT     all  --  10.19.0.33           anywhere            
+ACCEPT     all  --  10.19.0.52           anywhere            
+ACCEPT     all  --  10.19.0.51           anywhere            
+ACCEPT     all  --  10.19.0.50           anywhere            
+ACCEPT     all  --  10.19.0.10           anywhere            
+ACCEPT     all  --  anywhere             10.19.0.10          
+ACCEPT     all  --  10.19.0.20           anywhere            
+ACCEPT     all  --  anywhere             10.19.0.20          
+ACCEPT     all  --  10.19.0.12           anywhere            
+ACCEPT     all  --  anywhere             10.19.0.12          
+ACCEPT     all  --  10.19.0.11           anywhere            
+ACCEPT     all  --  anywhere             10.19.0.11          
+ACCEPT     all  --  10.19.0.22           anywhere            
+ACCEPT     all  --  anywhere             10.19.0.22          
+ACCEPT     all  --  10.19.0.21           anywhere            
+ACCEPT     all  --  anywhere             10.19.0.21          
+ACCEPT     all  --  anywhere             10.189.14.201       
+ACCEPT     all  --  anywhere             10.189.14.202       
+ACCEPT     all  --  anywhere             10.189.14.185       
+ACCEPT     all  --  anywhere             10.189.14.161       
+ACCEPT     all  --  anywhere             10.189.14.194       
+ACCEPT     all  --  anywhere             10.189.14.193       
+ACCEPT     all  --  mail.acsc.org.br     anywhere            
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+DROP       udp  --  anywhere             anywhere            multiport dports bootps,bootpc 
+F_GERAL    all  --  anywhere             anywhere            
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  10.189.14.20         anywhere            
+ACCEPT     all  --  10.189.14.200        anywhere            
+ACCEPT     all  --  mail.acsc.org.br     anywhere            
+ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:5901 
+ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:5900 
+ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:https 
+ACCEPT     tcp  --  anywhere             anywhere            tcp dpt:tcp-id-port 
+
+Chain F_CONSOLE (1 references)
+target     prot opt source               destination         
+ACCEPT     all  --  192.168.130.88       192.168.198.151     
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: CONSOLE - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_DNS (1 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: DNS - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_GED (2 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: GED - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_GERAL (2 references)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+ACCEPT     all  --  10.189.14.0/23       anywhere            
+ACCEPT     all  --  anywhere             10.19.0.0/16        
+F_SSH      tcp  --  anywhere             anywhere            tcp dpt:ssh 
+F_SMTP     tcp  --  anywhere             anywhere            tcp dpt:smtp 
+F_DNS      udp  --  anywhere             anywhere            udp dpt:domain 
+F_HTTP     tcp  --  anywhere             anywhere            tcp dpt:http 
+F_LDAP     tcp  --  anywhere             anywhere            multiport dports ldap,ldaps,msft-gc,msft-gc-ssl 
+F_HTTPS    tcp  --  anywhere             anywhere            tcp dpt:https 
+F_ORA      tcp  --  anywhere             anywhere            tcp dpt:ncube-lm 
+F_MYSQL    tcp  --  anywhere             anywhere            tcp dpt:mysql 
+F_TSERVER  tcp  --  anywhere             anywhere            tcp dpt:ms-wbt-server 
+F_GED      tcp  --  anywhere             anywhere            tcp dpt:array-manager 
+F_GED      udp  --  anywhere             anywhere            udp dpt:ms-sql-m 
+F_SMB      tcp  --  anywhere             anywhere            multiport dports epmap,netbios-ssn,microsoft-ds 
+F_SMB      udp  --  anywhere             anywhere            multiport dports epmap,netbios-ssn,microsoft-ds 
+F_ICMP     icmp --  anywhere             anywhere            
+F_TOMCAT   tcp  --  anywhere             anywhere            tcp dpt:webcache 
+F_CONSOLE  tcp  --  anywhere             anywhere            tcp dpt:acr-nema 
+F_WSUS     tcp  --  anywhere             anywhere            tcp dpt:8530 
+F_VNC      tcp  --  anywhere             anywhere            tcp dpt:5900 
+LOG        all  --  anywhere             anywhere            limit: avg 6/min burst 6 LOG level warning prefix `Firewall: Geral - ' 
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: Geral - ' 
+DROP       all  --  anywhere             anywhere            
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+ACCEPT     all  --  anywhere             anywhere            state RELATED,ESTABLISHED 
+
+Chain F_HTTP (1 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: HTTP - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_HTTPS (1 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: HTTPS - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_ICMP (1 references)
+target     prot opt source               destination         
+ACCEPT     icmp --  anywhere             anywhere            icmp echo-request 
+ACCEPT     icmp --  anywhere             anywhere            icmp echo-reply 
+ACCEPT     icmp --  anywhere             anywhere            icmp destination-unreachable limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp network-unreachable limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp host-unreachable limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp protocol-unreachable limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp port-unreachable limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp source-route-failed limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp network-unknown limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp host-unknown limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp network-prohibited limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp host-prohibited limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp TOS-network-unreachable limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp TOS-host-unreachable limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp communication-prohibited limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp time-exceeded limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp ttl-zero-during-transit limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp ttl-zero-during-reassembly limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp parameter-problem limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp ip-header-bad limit: avg 1/sec burst 5 
+ACCEPT     icmp --  anywhere             anywhere            icmp required-option-missing limit: avg 1/sec burst 5 
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: ICMP - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_LDAP (1 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: LDAP - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_MYSQL (1 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: MYSQL - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_ORA (1 references)
+target     prot opt source               destination         
+ACCEPT     all  --  anywhere             anywhere            
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: ORACLE - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_SMB (2 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: SMB - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_SMTP (1 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: SMTP - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_SSH (1 references)
+target     prot opt source               destination         
+ACCEPT     all  --  intra2.intersolution.inf.br  anywhere            
+ACCEPT     all  --  ec2-54-84-63-26.compute-1.amazonaws.com  anywhere            
+ACCEPT     all  --  ec2-174-129-216-93.compute-1.amazonaws.com  anywhere            
+ACCEPT     all  --  10.189.14.0/23       anywhere            
+LOG        all  --  anywhere             anywhere            limit: avg 6/min burst 6 LOG level warning prefix `Firewall: SSH - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_TOMCAT (1 references)
+target     prot opt source               destination         
+ACCEPT     all  --  10.189.14.0/23       anywhere            
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: TOMCAT - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_TSERVER (1 references)
+target     prot opt source               destination         
+ACCEPT     all  --  ec2-54-84-63-26.compute-1.amazonaws.com  anywhere            
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: TSERVER - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_VNC (1 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: VNC - ' 
+DROP       all  --  anywhere             anywhere            
+
+Chain F_WSUS (1 references)
+target     prot opt source               destination         
+LOG        all  --  anywhere             anywhere            LOG level alert prefix `Firewall: WSUS - ' 
+DROP       all  --  anywhere             anywhere            

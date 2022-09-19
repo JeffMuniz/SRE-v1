@@ -1,0 +1,83 @@
+A pesquisa efetuada mostra As 10 vulnerabilidades de segurança maiscríticas em aplicações WEB, de acordo com a OWASP em 2007, e logo abaixo temos a mesma lista de um outro site mostrando que, em 2017, dez anos depois as vulnerabilidades se mantém quase as mesmas. Algumas das diferentes ameças de 2007 e 2017, são uma evolução sequencial, ou do surgimento e popularização das tecnologias, como mobile apps por exemplo.
+
+ Uma recomendação geral para tratar essa vulnerabilidades, é investir em segurança em todos os aspectos. Pode falar sobre algumas específicas como um bom código com vlidaçoes de todos as entradas de dados é um bom começo, mas é possível encontrar na literatura a forma correta de fazer cada uma dessas correções.
+
+
+Ano 2007 
+
+Cross Site Scripting 
+
+ Cross Site Request Forgery (CSRF) 
+
+  Falhas de Injeção 
+
+ Furo de Autenticação e Gerência de Sessão
+
+   Falha ao Restringir Acesso À URLs 
+
+ Execução Maliciosa de Arquivo  
+
+Referência Insegura Direta a objeto  
+
+Vazamento de Informações e Tratamento de erros inapropriado 
+
+  Armazenamento criptogrtafico inseguro  
+
+Comunicações Inseguras 
+
+Fonte: https://owasp.org/www-pdf-archive/OWASP_TOP_10_2007_PT-BR.pdf
+Ano 2017 
+
+CROSS-SITE SCRIPTING (XSS) 
+
+CROSS-SITE REQUEST FORGERY (CSRF)
+
+ INJEÇÃO SQL, XML 
+
+GERENCIAMENTO DE SESSÃO E QUEBRAS DE AUTENTICAÇÃO
+
+  QUEBRAS NO CONTROLE DE ACESSO
+
+ CONFIGURAÇÃO INCORRETA DE SEGURANÇA
+
+ EXPOSIÇÃO DE DADOS SENSÍVEIS 
+
+PROTEÇÃO DE ATAQUE INSUFICIENTE 
+
+APIS DESPROTEGIDAS
+
+Fonte: https://inovedados.com.br/as-10-principais-vulnerabilidades-web
+
+
+Notamos que em 2018 houve uma nova classe de ameaças que evoluiram expnêncialmente, isso se deve a fatores como cloud computing e deep web, facilitando o acesso às ferramentas maliciosas através do pode de compra do atacante.
+Top Mobile Malware do Mundo durante o mês de setembro de 2018
+
+
+Lokibot – É um Trojan bancário que tem como alvo smartphones Android e torna-se num ransomware depois da vítima tentar retirar-lhe o privilégio de administrador.
+
+Lotoor – É uma ferramenta de hacking que explora as vulnerabilidades num sistema operativo Android para ganhar privilégios de administração nos dispositivos móveis comprometidos.
+
+Triada – É um Backdoor modular para Android que dá privilégios de super-utilizador para fazer download de malwares e ajuda a que seja incorporado nos processadores. O Triada já foi encontrado a fazer spoofing nos URLs abertos nos browsers.
+Fonte: https://www.techenet.com/2018/10/malware-vulnerabilidades-para-ciberataques/
+
+
+
+
+
+
+
+
+Resumo:
+
+SEGURANÇA NO AMBIENTE WEB
+
+ Foi nos perguntado: Quais as vulnerabilidades de um sistema no ambiente Web que são mais utilizadas para um ataque? O que pode ser feito para redução desse risco de ataque?  
+ Eu fiz uma pesquisa que mostra a relação entre as vulnerabilidades web mais exploradas em 2007, 2017 e 2018. Foi expressado o resultado descrito no fórum e ainda algumas recomendações e observações sobre os dados coletados.
+ Esse assunto, a abordagem das práticas recomendadas pela OWASP ou qualquer outra insituição séria e respeitada no mercado de segurança da informação, a busca pelos problemas no fim a fim de toad esteira, digital ou mesmo física que compreende esse ambiente e logo a mitigação desses riscos, são parte nucléica da disciplina em curso. A simbiótico a relação da segurança web e a proposta de objetivo final desse curso, que acredito ser forma white hats.
+
+
+
+
+
+
+

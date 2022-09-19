@@ -1,0 +1,136 @@
+version: '3.4'
+
+services:
+  availability.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    env_file:
+      - docker-compose.override.env
+    ports:
+      - "5010:80"
+      - "5011:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    networks:
+      - catalog_integration
+
+  availability.manager.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    networks:
+      - catalog_integration
+
+  availability.recovery.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    networks:
+      - catalog_integration
+
+  availability.search.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    networks:
+      - catalog_integration
+
+  dashboard.web:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    env_file:
+      - docker-compose.override.env
+    ports:
+      - "5020:80"
+      - "5021:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    networks:
+      - catalog_integration
+
+  price.history.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    networks:
+      - catalog_integration
+
+  product.change.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+
+  product.categorization.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+
+  product.enrichment.macnaima.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    env_file:
+      - docker-compose.override.env
+    ports:
+      - "5030:80"
+      - "5031:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    networks:
+      - catalog_integration
+
+  product.enrichment.macnaima.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    networks:
+      - catalog_integration
+
+  product.persistence.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    extra_hosts:
+      - "catalogintegrationapi.local.gd:host-gateway"
+    networks:
+      - catalog_integration
+
+  product.saga.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    networks:
+      - catalog_integration
+
+  product.supplier.magalu.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    networks:
+      - catalog_integration
+
+  search.worker:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    env_file:
+      - docker-compose.override.env
+    networks:
+      - catalog_integration
+
+networks:
+  catalog_integration:

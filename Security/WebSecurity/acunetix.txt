@@ -1,0 +1,67 @@
+
+
+
+Exemplo de XSS refletido:
+
+
+Tome-se como exemplo um aplicativo web que receba um parâmetro “nome” contendo a identificação do usuário legítimo e apresente o conteúdo sem quaisquer filtros:
+
+
+
+
+http://www.vul.site/welcome.html?name=fulano
+
+
+echo ‘<h1>Olá usuário ‘ + getParameter(‘name’) + ‘</h1>';
+
+
+
+Considere que um usuário mal intecionado altere o atalho para incluir um código
+
+
+
+http://testphp.vulnweb.com/
+
+
+Fonte: https://www.tenditech.com/2018/01/cross-site-scripting-o-que-e-e-como.html
+
+
+
+
+
+
+Fonte: https://br.video.search.yahoo.com/yhs/search?fr=yhs-dcola-016&hsimp=yhs-016&hspart=dcola&p=Acunetix#id=10&vid=e44a89eda716da3a54d434ccf9cec93a&action=click
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Cross-Site Scripting
+
+ Abordando o tema vulnerabilidades web, temos essa pesquisa de campo que traz:
+
+ - Ferramenta para simular a eploração de Cross-Site Scripting, também chamado de XSS.
+ - Site projetado especialmente para ser vítima de experimentos, contpem diversas vulnerabilidades conhecidas para fins acadêmicos e etcetera.
+
+ O resultado mostra, como esperado que existe tal vulnerabilidade, e que esta pode ser abordada maliciosamente. Nos mostra ainda o resultado: http://testphp.vulnweb.com/guestbook.php - que ao ser acessado, mostra uma janela no browser com o número 1, ou seja, foi possível manipular o browser do usuário através de scripts.
+ O relatório da ferramenta ainda mostra, uma descrição desse tipo vetor de ataque, uma recomendação de como resolver essas falhas.
+ Fica claro nesse estudo que, a segurança da informação não pode ser procrastinada, deve ser embrionária, deve estar presente desde o momento do nascimento do projeto, até sua entrega e deploy final, deve ser alimentada e colecionados os resultados para anãlise da evolução ds medidas implantadas. Dessa forma essa habilidade é essencial para o entendimento (mesmo que teórico) das aulas do curso atual
+
+
+Ferramenta usada para o teste:
+https://pentest-tools.com/website-vulnerability-scanning/xss-scanner-online
+
+Site que sofreu teste:
+http://testphp.vulnweb.com/
+
+

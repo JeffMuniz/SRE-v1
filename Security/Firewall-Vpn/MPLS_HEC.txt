@@ -1,0 +1,32 @@
+###### MPLS HRC
+
+route add -net 172.16.0.0/24 gw 172.16.10.250
+
+#############################################
+# Tabela F_SMB
+#############################################
+
+$fw -A F_SMB -s 172.16.0.2 -d 172.17.10.4 -j ACCEPT
+
+#############################################
+# Tabela F_ORA
+#############################################
+
+$fw -A F_ORA -s 172.16.0.2 -d 172.16.40.1  -j ACCEPT
+$fw -A F_ORA -s 172.16.0.2 -d 172.16.40.2  -j ACCEPT
+
+iptables -I INPUT -s 172.29.0.0/16 -j ACCEPT
+iptables -I INPUT -s 172.16.0.0/16 -j ACCEPT
+iptables -I FORWARD -s 172.16.0.0/16 -d 172.17.0.0/22 -j ACCEPT
+iptables -I FORWARD -s 172.17.0.0/22 -d 172.16.0.0/16 -j ACCEPT
+iptables -t nat -I POSTROUTING -d 172.16.0.0/24 -j SNAT --to 172.16.10.254
+
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.17.10.4 -p tcp --dport 135 -j DNAT --to 172.17.0.4:135
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.17.10.4 -p tcp --dport 139 -j DNAT --to 172.17.0.4:139
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.17.10.4 -p tcp --dport 445 -j DNAT --to 172.17.0.4:445
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.17.10.4 -p udp --dport 135 -j DNAT --to 172.17.0.4:135
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.17.10.4 -p udp --dport 139 -j DNAT --to 172.17.0.4:139
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.17.10.4 -p udp --dport 445 -j DNAT --to 172.17.0.4:445
+
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.17.10.7 -p tcp --dport 1521 -j DNAT --to 172.17.0.7:1521
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.17.10.9 -p tcp --dport 1521 -j DNAT --to 172.17.0.9:1521

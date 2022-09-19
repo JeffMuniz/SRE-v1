@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: availabilityrecoveryworker
+  namespace: catalog-integration-qa
+data:
+  Consul__Key: qa/catalog/integrations/availability/recovery
+  ConnectionStrings__Integration:   configmap.yaml: should be well protected
+  ConnectionStrings__HangFire_Storage:   configmap.yaml: should be well protected

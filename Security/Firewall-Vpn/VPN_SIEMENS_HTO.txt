@@ -1,0 +1,53 @@
+[root@hst-firewall sysconfig]# cat vpn_siemens.sh
+# Ensure that all packets destined for local addresses start at our local address
+#iptables -t nat -I POSTROUTING --src 172.16.0.0/24 --dst 129.73.116.88/29 -j SNAT --to-source 200.216.73.58
+iptables -t nat -I POSTROUTING --src 172.16.0.0/24 --dst 129.73.116.88/29 -j SNAT --to-source 200.216.73.58
+
+# Ensure that any IPsec secured packets are not further mangled
+iptables -t nat -I POSTROUTING --out-interface em2 -m policy --dir out --pol ipsec -j ACCEPT
+
+# Ensure that any packets destined for a local network which are leaving over the WAN are secured with IPsec
+iptables -I OUTPUT  --dst 129.73.116.88/29 --out-interface em2 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+iptables -I FORWARD --dst 129.73.116.88/29 --out-interface em2 -m policy --dir out --pol ipsec -j REJECT --reject-with icmp-net-unreachable
+
+# Allow any packets secured by IPsec to be sent and received
+iptables -I INPUT  --in-interface  em1 -m policy --dir in  --pol ipsec -j ACCEPT
+iptables -I OUTPUT --out-interface em2 -m policy --dir out --pol ipsec -j ACCEPT
+
+# Allow any packets secured by IPsec to be forwarded as appropriate
+iptables -I FORWARD --in-interface em1 --out-interface lan -m policy --dir in  --pol ipsec -j ACCEPT
+iptables -I FORWARD --in-interface em2 --out-interface wan -m policy --dir out --pol ipsec -j ACCEPT
+
+# Allow any ISAKMP packets to be sent and received
+iptables -I INPUT  --in-interface  em1 --protocol udp --dport isakmp -j ACCEPT
+iptables -I OUTPUT --out-interface em2 --protocol udp --dport isakmp -j ACCEPT
+
+# Allow any UDP encapsulated IPsec packets to be sent and received
+iptables -I INPUT  --in-interface  em2 --protocol udp --dport ipsec-nat-t -j ACCEPT
+iptables -I OUTPUT --out-interface em2 --protocol udp --sport ipsec-nat-t -j ACCEPT
+iptables -I OUTPUT --out-interface em2 --protocol udp --dport ipsec-nat-t -j ACCEPT
+
+iptables -I FORWARD -p esp -s 12.46.135.193 -d 172.16.0.210 -j ACCEPT
+iptables -I FORWARD -p esp -s 172.16.0.210 -d 12.46.135.193 -j ACCEPT
+
+iptables -I FORWARD -p ah -s 12.46.135.193 -d 172.16.0.210 -j ACCEPT
+iptables -I FORWARD -p ah -s 172.16.0.210 -d 12.46.135.193 -j ACCEPT
+
+iptables -I FORWARD -p udp -s 12.46.135.193 -d 172.16.0.210 --sport 500 --dport 500 -j ACCEPT
+iptables -I FORWARD -p udp -s 172.16.0.210 -d 12.46.135.193 --sport 500 --dport 500 -j ACCEPT
+
+iptables -I FORWARD -p udp -s 12.46.135.193 -d 172.16.0.210 --sport 4500 --dport 4500 -j ACCEPT
+iptables -I FORWARD -p udp -s 172.16.0.210 -d 12.46.135.193 --sport 4500 --dport 4500 -j ACCEPT
+
+iptables -t nat -I PREROUTING -i em2 -p udp -m udp --dport 4500 -d 200.216.73.58  -j DNAT --to-destination 172.16.0.210:4500
+iptables -t nat -I PREROUTING -i em2 -p udp -m udp --dport 500 -d 200.216.73.58 -j DNAT --to-destination 172.16.0.210:500
+
+iptables -I INPUT -m state --state NEW,ESTABLISHED,RELATED -j ACCEPT
+iptables -I INPUT -m state --state NEW,ESTABLISHED,RELATED -m udp -p udp --dport 500 -j ACCEPT
+iptables -I INPUT -m state --state NEW,ESTABLISHED,RELATED -m udp -p udp --dport 4500 -j ACCEPT
+
+iptables -t nat -I POSTROUTING 1 -p 50 -j ACCEPT
+iptables -t nat -I POSTROUTING 1 -p 51 -j ACCEPT
+
+iptables -I INPUT  --in-interface  em2 --protocol udp --sport ipsec-nat-t -m state --state ESTABLISHED -j ACCEPT
+[root@hst-firewall sysconfig]#

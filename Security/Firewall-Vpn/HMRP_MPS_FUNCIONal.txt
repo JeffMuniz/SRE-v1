@@ -1,0 +1,23 @@
+
+
+### MPLS
+
+route delete -net 172.16.40.0 netmask 255.255.255.248 gw 172.29.0.2
+route add -net 172.16.0.0 netmask 255.255.255.0 gw 172.16.40.250
+
+#############################################
+# Tabela F_ORA
+#############################################
+
+$fw -A F_ORA -s 172.16.0.2 -d 172.16.40.1  -j ACCEPT
+$fw -A F_ORA -s 172.16.0.2 -d 172.16.40.2  -j ACCEPT
+
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.16.40.1 -p tcp --dport 1521 -j DNAT --to 10.0.0.1:1521
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.16.40.2 -p tcp --dport 1521 -j DNAT --to 10.0.0.2:1521
+
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.16.40.4 -p tcp --dport 135 -j DNAT --to 10.0.0.4:135
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.16.40.4 -p tcp --dport 139 -j DNAT --to 10.0.0.4:139
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.16.40.4 -p tcp --dport 445 -j DNAT --to 10.0.0.4:445
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.16.40.4 -p udp --dport 135 -j DNAT --to 10.0.0.4:135
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.16.40.4 -p udp --dport 139 -j DNAT --to 10.0.0.4:139
+iptables -t nat -A PREROUTING -s 172.16.0.2 -d 172.16.40.4 -p udp --dport 445 -j DNAT --to 10.0.0.4:445

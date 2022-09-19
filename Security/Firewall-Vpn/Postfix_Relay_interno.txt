@@ -1,0 +1,21 @@
+http://187.93.126.66:8088/sigmon/?
+SSH: 187.93.126.66 -p 2223?
+
+
+Main:
+
+mynetworks = 127.0.0.0/8,10.0.8.80,10.0.2.150,10.0.2.10,10.0.18.1,10.0.2.7
+
+mynetworks = 127.0.0.0/8,10.0.20.0/24
+
+###########################################################################
+
+GENERIC:
+
+@SIGMon-HGI sigmon@intersolution.inf.br
+@SIGMon-HGI.localdomain sigmon@intersolution.inf.br
+@fwhgi.localdomain sigmon@intersolution.inf.br
+@fwhgi sigmon@intersolution.inf.br
+@dbsenior2.localdomain sigmon@intersolution.inf.br
+@bi.hgi sigmon@intersolution.inf.br
+@mvbd.localdomain sigmon@intersolution.inf.br

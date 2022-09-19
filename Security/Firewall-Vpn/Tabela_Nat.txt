@@ -1,0 +1,91 @@
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination         
+ACCEPT     all  --  10.189.14.201        anywhere            
+ACCEPT     all  --  10.189.14.200        anywhere            
+ACCEPT     all  --  10.189.14.20         anywhere            
+DNAT       tcp  --  anywhere             anywhere            tcp dpt:webcache to:10.189.14.201:8080 
+DNAT       tcp  --  anywhere             anywhere            tcp dpt:webcache to:10.189.14.201:8080 
+DNAT       tcp  --  anywhere             anywhere            tcp dpt:8090 to:10.189.14.30:8090 
+DNAT       tcp  --  anywhere             anywhere            tcp dpt:8090 to:10.189.14.30:8090 
+DNAT       tcp  --  ec2-174-129-216-93.compute-1.amazonaws.com  177-53-171-34.alterna.com.br tcp dpt:ats to:10.189.14.200:22 
+DNAT       tcp  --  ec2-54-84-63-26.compute-1.amazonaws.com  177-53-171-34.alterna.com.br tcp dpt:ats to:10.189.14.200:22 
+DNAT       tcp  --  intra2.intersolution.inf.br  177-53-171-34.alterna.com.br tcp dpt:ats to:10.189.14.200:22 
+DNAT       tcp  --  ec2-174-129-216-93.compute-1.amazonaws.com  177-53-171-34.alterna.com.br tcp dpt:ici to:10.189.14.20:22 
+DNAT       tcp  --  ec2-54-84-63-26.compute-1.amazonaws.com  177-53-171-34.alterna.com.br tcp dpt:ici to:10.189.14.20:22 
+DNAT       tcp  --  intra2.intersolution.inf.br  177-53-171-34.alterna.com.br tcp dpt:ici to:10.189.14.20:22 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:csms to:10.189.14.25:3389 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:rockwell-csp2 to:10.189.14.21:22 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:irdmi to:10.189.14.21:80 
+ACCEPT     all  --  10.19.0.32           anywhere            
+ACCEPT     all  --  10.19.0.31           anywhere            
+ACCEPT     all  --  10.19.0.30           anywhere            
+ACCEPT     all  --  10.19.0.29           anywhere            
+ACCEPT     all  --  10.19.0.28           anywhere            
+ACCEPT     all  --  10.19.0.27           anywhere            
+ACCEPT     all  --  10.19.0.26           anywhere            
+ACCEPT     all  --  10.19.0.25           anywhere            
+ACCEPT     all  --  10.19.0.24           anywhere            
+ACCEPT     all  --  10.19.0.23           anywhere            
+ACCEPT     all  --  10.19.0.33           anywhere            
+ACCEPT     all  --  10.19.0.52           anywhere            
+ACCEPT     all  --  10.19.0.51           anywhere            
+ACCEPT     all  --  10.19.0.50           anywhere            
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:22222 to:10.19.0.10:22 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:fujitsu-neat to:10.19.0.20:3389 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:geneous to:10.19.0.12:3389 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:sns-channels to:10.19.0.11:3389 
+ACCEPT     all  --  10.19.0.22           anywhere            
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:printer_agent to:10.19.0.22:3389 
+ACCEPT     all  --  10.19.0.21           anywhere            
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:dyna-lm to:10.19.0.21:3389 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:cloanto-lm to:10.189.14.201:3389 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:dsc to:10.189.14.202:3389 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:ms-wbt-server to:10.189.14.185:3389 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:x11 to:10.189.14.161:6000 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:5800 to:10.189.14.194:5800 
+DNAT       tcp  --  anywhere             177-53-171-34.alterna.com.br tcp dpt:5930 to:10.189.14.193:5930 
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination         
+SNAT       all  --  anywhere             anywhere            to:177.53.171.34 
+SNAT       all  --  anywhere             10.189.14.201       to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.201       to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.30        to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.30        to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.200       to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.20        to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.25        to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.21        to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.21        to:10.189.14.24 
+MASQUERADE  all  --  10.19.0.32           anywhere            
+MASQUERADE  all  --  10.19.0.31           anywhere            
+MASQUERADE  all  --  10.19.0.30           anywhere            
+MASQUERADE  all  --  10.19.0.29           anywhere            
+MASQUERADE  all  --  10.19.0.28           anywhere            
+MASQUERADE  all  --  10.19.0.27           anywhere            
+MASQUERADE  all  --  10.19.0.26           anywhere            
+MASQUERADE  all  --  10.19.0.25           anywhere            
+MASQUERADE  all  --  10.19.0.24           anywhere            
+MASQUERADE  all  --  10.19.0.23           anywhere            
+MASQUERADE  all  --  10.19.0.33           anywhere            
+MASQUERADE  all  --  10.19.0.52           anywhere            
+MASQUERADE  all  --  10.19.0.51           anywhere            
+MASQUERADE  all  --  10.19.0.50           anywhere            
+SNAT       all  --  anywhere             10.19.0.10          to:10.19.0.1 
+MASQUERADE  all  --  10.19.0.20           anywhere            
+SNAT       all  --  anywhere             10.19.0.20          to:10.19.0.1 
+SNAT       all  --  anywhere             10.19.0.12          to:10.19.0.1 
+SNAT       all  --  anywhere             10.19.0.11          to:10.19.0.1 
+MASQUERADE  all  --  10.19.0.22           anywhere            
+SNAT       all  --  anywhere             10.19.0.22          to:10.19.0.1 
+MASQUERADE  all  --  10.19.0.21           anywhere            
+SNAT       all  --  anywhere             10.19.0.21          to:10.19.0.1 
+SNAT       all  --  anywhere             10.189.14.201       to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.202       to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.185       to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.161       to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.194       to:10.189.14.24 
+SNAT       all  --  anywhere             10.189.14.193       to:10.189.14.24 
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination         

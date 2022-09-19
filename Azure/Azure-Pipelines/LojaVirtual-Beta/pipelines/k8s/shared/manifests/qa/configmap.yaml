@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sharedapps
+  namespace: catalog-integration-qa
+data:
+  DOTNET_ENVIRONMENT: Production
+  ASPNETCORE_ENVIRONMENT: Production
+  ASPNETCORE_URLS: http://+:80
+  ConnectionStrings__ServiceBus: Endpoint=sb://productapisbqa.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=PaM63BPYhGZUn+W3BBpxSlmpK1XRip7qHX/fB/W0Uys=;TransportType=Amqp
+  Consul__Address: http://az-us-dev-consul-01.labmac.corp:8500
+  Consul__Token:   configmap.yaml: should be well protected
+  Logging__AzureEventHub__Environment: qa
+  Logging__AzureEventHub__ConnectionString: Endpoint=sb://macmarketplaceeventhubdev01.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=KQTotK8zznQ2ZGHYkFKujbAK4sZeZKIpyem/VdNMuZY=

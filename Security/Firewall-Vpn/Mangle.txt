@@ -1,0 +1,28 @@
+[root@fw-hec ~]# iptables -t mangle -nL
+Chain PREROUTING (policy ACCEPT)
+target     prot opt source               destination
+MARK       all  --  10.189.14.201        0.0.0.0/0           MARK set 0x2
+MARK       all  --  10.189.14.200        0.0.0.0/0           MARK set 0x2
+MARK       all  --  10.189.14.20         0.0.0.0/0           MARK set 0x2
+
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination
+MARK       all  --  10.189.14.201        0.0.0.0/0           MARK set 0x2
+MARK       all  --  10.189.14.200        0.0.0.0/0           MARK set 0x2
+MARK       all  --  10.189.14.20         0.0.0.0/0           MARK set 0x2
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+MARK       all  --  10.189.14.201        0.0.0.0/0           MARK set 0x2
+MARK       all  --  10.189.14.200        0.0.0.0/0           MARK set 0x2
+MARK       all  --  10.189.14.20         0.0.0.0/0           MARK set 0x2
+
+Chain POSTROUTING (policy ACCEPT)
+target     prot opt source               destination
+MARK       all  --  10.189.14.201        0.0.0.0/0           MARK set 0x2
+MARK       all  --  10.189.14.200        0.0.0.0/0           MARK set 0x2
+MARK       all  --  10.189.14.20         0.0.0.0/0           MARK set 0x2
+[root@fw-hec ~]#

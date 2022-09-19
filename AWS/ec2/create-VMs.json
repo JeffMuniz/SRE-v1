@@ -1,0 +1,50 @@
+#### CENTOS 7 ####
+echo "
+[
+  {
+    "Description": "centosv7",
+    "Format": "vmdk",
+    "UserBucket": {
+        "S3Bucket": "s3migratebuck",
+        "S3Key": "VM-Import/vm 1-disk001.vmdk"
+    }
+}]
+"
+2&1 >> centos7.json
+
+
+
+
+#### disk vmdk ####
+echo "
+[
+  {
+    "Description": "vm1disk001vmdk",
+    "Format": "vmdk",
+    "UserBucket": {
+        "S3Bucket": "s3migratebuck",
+        "S3Key": "VM-Import/vm 1-disk001.vmdk"
+    }
+}]
+
+"
+2&1 >> vm1-disk001.vmdk.json
+
+
+
+
+#### WIN 10 ####
+echo "
+[
+  {
+    "Description": "windows10",
+    "Format": "vmdk",
+    "UserBucket": {
+        "S3Bucket": "s3migratebuck",
+        "S3Key": "VM-Import/MSEdge-Win10-VMware-disk1.vmdk"
+    }
+}]
+"
+2&1 >> win10.json
+
+

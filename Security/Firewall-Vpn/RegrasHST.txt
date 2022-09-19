@@ -1,0 +1,39 @@
+
+### NAT - DNAT-SNAT
+#Aqui está permitindo qualquer entrada tcp ou udp para este IP
+
+iptables -I INPUT -p ALL -d 172.27.120.200 -j ACCEPT
+iptables -I INPUT -p ALL -d 172.27.120.201 -j ACCEPT
+iptables -I INPUT -p ALL -d 172.27.120.202 -j ACCEPT
+iptables -I INPUT -p ALL -d 172.27.120.203 -j ACCEPT
+iptables -I INPUT -p ALL -d 172.27.120.204 -j ACCEPT
+iptables -I INPUT -p ALL -d 172.27.120.205 -j ACCEPT
+iptables -I INPUT -p ALL -d 172.27.120.206 -j ACCEPT
+iptables -I INPUT -p ALL -d 172.27.120.207 -j ACCEPT
+
+
+# Aqui qualquer pacote destinado ao ip 200.2.remoteShellVulner válido (Alias de Interface) 
+# será destinado à 192.168.2.253 da rede interna.
+
+iptables -t nat -I PREROUTING -d 172.27.120.200 -j DNAT --to-destination 172.16.67.3
+iptables -t nat -I PREROUTING -d 172.27.120.201 -j DNAT --to-destination 172.16.67.4
+iptables -t nat -I PREROUTING -d 172.27.120.202 -j DNAT --to-destination 172.16.67.5
+iptables -t nat -I PREROUTING -d 172.27.120.203 -j DNAT --to-destination 172.16.67.6
+iptables -t nat -I PREROUTING -d 172.27.120.204 -j DNAT --to-destination 172.16.67.7
+iptables -t nat -I PREROUTING -d 172.27.120.205 -j DNAT --to-destination 172.16.67.8
+iptables -t nat -I PREROUTING -d 172.27.120.206 -j DNAT --to-destination 172.16.67.9
+iptables -t nat -I PREROUTING -d 172.27.120.207 -j DNAT --to-destination 172.16.67.10
+
+
+# Aqui diz que tudo com origem em 192.168.2.253 sairá com com ip 200.2.remoteShellVulner
+#iptables -t nat -I POSTROUTING -s 192.168.2.253 -j SNAT --to-source 200.2.remoteShellVulner
+
+iptables -t nat -I POSTROUTING -s 172.16.67.3 -j SNAT --to-destination 172.27.120.200
+iptables -t nat -I POSTROUTING -s 172.16.67.4 -j SNAT --to-destination 172.27.120.201
+iptables -t nat -I POSTROUTING -s 172.16.67.5 -j SNAT --to-destination 172.27.120.202
+iptables -t nat -I POSTROUTING -s 172.16.67.6 -j SNAT --to-destination 172.27.120.203
+iptables -t nat -I POSTROUTING -s 172.16.67.7 -j SNAT --to-destination 172.27.120.204
+iptables -t nat -I POSTROUTING -s 172.16.67.8 -j SNAT --to-destination 172.27.120.205
+iptables -t nat -I POSTROUTING -s 172.16.67.9 -j SNAT --to-destination 172.27.120.206
+iptables -t nat -I POSTROUTING -s 172.16.67.10 -j SNAT --to-destination 172.27.120.207
+

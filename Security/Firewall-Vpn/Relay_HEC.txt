@@ -1,0 +1,7 @@
+[200.143.59.181]:587 envio@hec.org.br:_ACSC2016_
+[smtpexc01.redehost.com.br]:587 envio@hec.org.br:_ACSC2016_
+~
+
+
+@SMTP-HAM notificacoes@ham.org.br
+@SMTP-HAM.localdomain notificacoes@ham.org.br

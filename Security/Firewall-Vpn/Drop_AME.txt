@@ -1,0 +1,13 @@
+200.206.45.7:56389
+User: .\Administrator
+Password: IS@Hasproot951357!
+
+
+iptables -I FORWARD -p tcp -d 10.10.0.212 -j DROP
+iptables -I INPUT -p tcp -d 10.10.0.212 -j DROP
+iptables -I OUTPUT -p tcp -d 10.10.0.212 -j DROP
+iptables -I INPUT -p tcp -d 10.10.0.212 -j DROP
+iptables -I INPUT -p tcp -S 10.10.0.212 -j DROP
+iptables -I INPUT -p tcp -s 10.10.0.212 -j DROP
+iptables -I OUTPUT -p tcp -s 10.10.0.212 -j DROP
+iptables -I FORWARD -p tcp -s 10.10.0.212 -j DROP
