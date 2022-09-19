@@ -3,7 +3,7 @@
 * Desenhar a arquitetura alto nível do sistema: Data Flow, Requests Flow para
  ajudar no estabelecimento do SLO
 * Defininção dos SLI's
-    * Latência de Requisição, Taxa de Erro (requests), Throughpu
+    * Latência de Requisição, Taxa de Erro (requests), Throughput
      (requests por segundo - TPS)
 * Definir o Documento de SLO
     * Tipo do SLO (sli) e o Objetivo (SLO)
