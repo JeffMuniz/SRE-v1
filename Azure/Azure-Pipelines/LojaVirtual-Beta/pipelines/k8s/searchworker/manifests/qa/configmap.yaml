@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: searchworker
-  namespace: catalog-integration-qa
-data:
-  Consul__Key: qa/catalog/integrations/search
