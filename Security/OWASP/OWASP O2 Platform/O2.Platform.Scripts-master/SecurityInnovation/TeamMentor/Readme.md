@@ -1,1 +1,0 @@
-The TeamMentor scripts were moved to it is own repository: https://github.com/TeamMentor/UnitTests
