@@ -119,7 +119,7 @@ Middleware Ricardo Monolina - Container, weblogic,filas
 Cordenação de banco Tarcio, banco de baixa plataforma, core Oracle com SQL, mongo DB
 
 , Performance e capacidade, estress teste carga, gestão de capacidade de infra estrutura
-Sustentação da TIVIT, 80 pessoas, entre terceitos e funcioárois 120, pessos 3000 servidores
+Sustentação da DataCenter, 80 pessoas, entre terceitos e funcioárois 120, pessos 3000 servidores
 
 SAST, DAST tem somente dois projetos novos
 Parte do cloud entra com, na evolução acontece o controle
@@ -133,7 +133,7 @@ Qua documentado estas este procedimento para recuperação de site
 - Te muitas ferramentas, mas precisa saber se são usadas, pois não estão integradas
 - Regras de telecom, vies técnico 
 - Falar com Telecom 
-- Usa qualis, no passado tenable, usa os dois em paralelo
+- Usa qualis, no passado tenable, usa os dois em parmacna
 - Fazem pantest
 ***** Dor muito grande *****
 Muito cilos, ferramentas não se falam, falta padronização
@@ -144,26 +144,27 @@ Diretorio de infra estrutua Nima, william, mais tres coordenadores
 Celendai gestão de incidentes, 
 Calendai faz gestão da rotina
 
-Sabrina, recurso da calendai e ciele, gestão de problemas, cielo e terceiro e gestão de indisponibilidade, celula de qualidade que gera relario para clienes externos e internos. 
+Sabrina, recurso da calendai e ciele, gestão de problemas, macna e terceiro e gestão de indisponibilidade, celula de qualidade que gera relario para clienes externos e internos. 
 
 Como controlam adesão ao metodo, tem indicadores dos processos, 
 usa MTTR, 
 
 Gestão de mudança e problemas, 
 
-Bonesi: Dor, processo é chato, tem que invertir um bom papo para convencimento, existe possibilidade para melhorias
-        - compreenção, 30 tem um percepção boa 70% não, se não seguir vai ser pontuado. 
-        - Quando squad trabalho sem controle deixa acarreta vários problemas. 
-        - Ferramenta ITSM, SDM Tableu, GMUD validada por pessoal
-        - Acorde de nível de serviços funciona bem, está em acordo com as demais áreas
-        - Não respira SLA, não se baseia nela, não cumprem SLA, cumprem no grito, A TIVIT trabalham por SLA
-        - Cliente interno sim é notificado, externo depende da gravidade
-        - Divulgação é feita para todas a áreas, sãi feito workshopps para deivulgação dos processos
-        - Metas de Go dos indicadores
-        - O processos estão bem desenhados a muito tempo. 
-        - Não concordam com procedimentos, tem que ser algo mais fácial de usar, uma forma prática de seber tudo que faze ma ti e sua  
-          obrigação
-        - Quantidade de colaboradores são suficiente para os processo na GSTI são adequados
+
+ Dor, processo é chato, tem que invertir um bom papo para convencimento, existe possibilidade para melhorias
+- compreenção, 30 tem um percepção boa 70% não, se não seguir vai ser pontuado. 
+- Quando squad trabalho sem controle deixa acarreta vários problemas. 
+- Ferramenta ITSM, SDM Tableu, GMUD validada por pessoal
+- Acorde de nível de serviços funciona bem, está em acordo com as demais áreas
+- Não respira SLA, não se baseia nela, não cumprem SLA, cumprem no grito, A DataCenter trabalham por LA
+- Cliente interno sim é notificado, externo depende da gravidade
+- Divulgação é feita para todas a áreas, sãi feito workshopps para deivulgação dos processos
+- Metas de Go dos indicadores
+- O processos estão bem desenhados a muito tempo. 
+- Não concordam com procedimentos, tem que ser algo mais fácial de usar, uma forma prática de seber udo queaze ma ti e sua  
+  obrigação
+- Quantidade de colaboradores são suficiente para os processo na GSTI são adequados
 
 
 
@@ -182,7 +183,7 @@ Bonesi: Dor, processo é chato, tem que invertir um bom papo para convencimento,
   - Na steira nova tem todo o processo de CI/CD com os devidos controles
   - Falta padronização de desenvolvimento
   - Não tem post mortem definido
-  - Aws usa secret como segurança, valt
+  - Aws usa secret como segurança, vault
  
 
 
