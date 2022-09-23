@@ -1,0 +1,72 @@
+{
+  "name": "mac-react-template",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@craco/craco": "^6.1.2",
+    "@styled-icons/icomoon": "^10.34.0",
+    "axios": "^0.21.1",
+    "clone": "2.1.2",
+    "cpf-cnpj-validator": "^1.0.3",
+    "element-is-visible": "^1.0.0",
+    "formik": "^2.2.7",
+    "mobx": "6.3.0",
+    "mobx-persist-store": "^1.0.0-rc.0",
+    "mobx-react-lite": "3.2.0",
+    "polished": "^4.1.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-fast-compare": "^3.2.0",
+    "react-inlinesvg": "^2.3.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "react-spinners": "^0.11.0",
+    "string-mask": "^0.3.0",
+    "styled-components": "5.3.0",
+    "sweet-scroll": "^4.0.0",
+    "typescript": "4.1.2",
+    "web-vitals": "1.0.1",
+    "yup": "^0.32.9"
+  },
+  "scripts": {
+    "start": "env-cmd -e development craco start",
+    "build:development": "env-cmd -e development craco build",
+    "build:staging": "env-cmd -e staging craco build",
+    "build:production": "env-cmd -e production craco build",
+    "build:dev": "env-cmd -e dev craco build",
+    "build:stg": "env-cmd -e stg craco build",
+    "build:qa": "env-cmd -e qa craco build",
+    "build:prd": "env-cmd -e prd craco build",
+    "test": "craco test",
+    "eject": "craco eject",
+    "lint": "eslint \"**/*.ts\" \"**/*.tsx\" --ignore-pattern node_modules/",
+    "lint:fix": "yarn lint --fix"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "5.11.4",
+    "@testing-library/react": "11.1.0",
+    "@testing-library/user-event": "12.1.10",
+    "@types/clone": "2.1.0",
+    "@types/jest": "26.0.15",
+    "@types/node": "12.0.0",
+    "@types/react": "17.0.0",
+    "@types/react-dom": "17.0.0",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/styled-components": "5.1.9",
+    "craco-fast-refresh": "^1.0.5",
+    "env-cmd": "^10.1.0",
+    "eslint-plugin-better-styled-components": "1.1.2"
+  }
+}

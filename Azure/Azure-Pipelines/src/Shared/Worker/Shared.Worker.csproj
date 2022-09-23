@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <LangVersion>Latest</LangVersion>
+    <Configurations>Debug;DEV;QA;UAT;PP;PROD</Configurations>
+    <AssemblyName>Catalog.Integration.Shared.Worker</AssemblyName>
+    <RootNamespace>Shared.Worker</RootNamespace>    
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Optimize Condition="'$(Configuration)'=='Debug'">false</Optimize>
+    <Optimize Condition="'$(Configuration)'!='Debug'">true</Optimize>
+    <DefineConstants Condition="'$(Configuration)'=='DEV'">DEV</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='QA'">QA</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='UAT'">UAT</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='PP'">PP</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='PROD'">PROD</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="MassTransit" Version="7.3.1" />
+    <PackageReference Include="MassTransit.Analyzers" Version="7.3.1" />
+    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="7.3.1" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
+    <PackageReference Include="NLog" Version="4.7.13" />
+    <PackageReference Include="NLog.Extensions.AzureEventHub" Version="3.1.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.7.4" />
+    <PackageReference Include="Winton.Extensions.Configuration.Consul" Version="3.1.2" />
+  </ItemGroup>
+</Project>

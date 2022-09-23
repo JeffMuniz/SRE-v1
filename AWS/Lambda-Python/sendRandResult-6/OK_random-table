@@ -1,0 +1,69 @@
+import json
+import boto3
+import uuid
+from uuid import uuid4
+
+
+def lambda_handler(event, context):
+    
+    dynamo = boto3.client("dynamodb")
+    URL = "https://3w0zg1oeh0.execute-api.us-east-2.amazonaws.com/production"
+    client = boto3.client("apigatewaymanagementapi", endpoint_url = URL)
+    dynamodb_client = boto3.client("dynamodb")
+
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('random')
+
+
+# Create 100 records with a random partition key
+for i in range(10):
+    client = boto3.client("dynamodb")
+    item = {'S': str(uuid.uuid4()), 'S': f"question-{i}"}
+    client.put_item(TableName="random", Item={"randkey": item})
+    print(f"Inserted {item}")
+
+
+
+# Read 3 records and print them with the consumed capacity
+for i in range(3):
+    dynamodb = boto3.client("dynamodb")
+    response = dynamodb.scan(TableName="random", Limit=1, ExclusiveStartKey={"randkey": item}
+    #response = dynamodb.scan(TableName="random", Limit=1, ExclusiveStartKey={'S': str(uuid4())}
+    #response = dynamodb.scan(TableName="random", Limit=1, ExclusiveStartKey={item)}
+    )
+
+
+if response['Items']:
+        print({
+            "Item": response['Items'][0],
+            #"Capacity": response['ConsumedCapacity']['CapacityUnits'],
+            "ScannedCount": response['ScannedCount']
+        })
+
+data = response['Items']
+
+def lambda_handler(event, context):
+
+    
+    dynamo = boto3.client("dynamodb")
+    URL = "https://3w0zg1oeh0.execute-api.us-east-2.amazonaws.com/production"
+    client = boto3.client("apigatewaymanagementapi", endpoint_url = URL)
+    dynamodb = boto3.resource('dynamodb')
+    
+    table = dynamodb.Table('randwebsock')
+    response = table.scan()
+   
+    
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        data.extend(response['Items'])
+
+    response  = dynamo.scan(TableName="randwebsock")
+    for connection in response["Items"]:
+        response = client.post_to_connection(ConnectionId=connection["connectionId"]["S"], Data=json.dumps(data))
+    
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Have a nice Wordling')
+    }

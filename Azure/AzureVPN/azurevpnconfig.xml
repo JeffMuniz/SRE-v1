@@ -1,0 +1,50 @@
+<AzVpnProfile xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/">
+  <any xmlns:d2p1="http://schemas.datacontract.org/2004/07/System.Xml"
+    i:nil="true" />
+  <clientauth>
+    <aad
+      i:nil="true" />
+    <cert>
+      <hash
+        i:nil="true" />
+      <issuer>some-entropy</issuer>
+    </cert>
+    <type>cert</type>
+    <usernamepass
+      i:nil="true" />
+  </clientauth>
+  <clientconfig>
+    <dnsservers>
+      <DnsServerEntry>
+        <dnsserver>10.2.1.3</dnsserver>
+      </DnsServerEntry>
+    </dnsservers>
+    <excluderoutes
+      i:nil="true" />
+    <includeroutes
+      i:nil="true" />
+  </clientconfig>
+  <name>VNetData</name>
+  <protocolconfig>
+    <sslprotocolConfig>
+      <transportprotocol>tcp</transportprotocol>
+    </sslprotocolConfig>
+  </protocolconfig>
+  <serverlist>
+    <ServerEntry>
+      <displayname
+        i:nil="true" />
+      <fqdn>azuregateway-some-sha.vpn.azure.com</fqdn>
+    </ServerEntry>
+  </serverlist>
+  <servervalidation>
+    <cert>
+      <hash>some-entropy</hash>
+      <issuer
+        i:nil="true" />
+    </cert>
+    <serversecret>some-entropy</serversecret>
+    <type>cert</type>
+  </servervalidation>
+  <version>1</version>
+</AzVpnProfile>

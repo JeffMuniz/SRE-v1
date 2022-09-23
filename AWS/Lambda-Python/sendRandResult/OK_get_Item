@@ -1,0 +1,36 @@
+import json
+import boto3
+
+def lambda_handler(event, context):
+    
+    dynamo = boto3.client("dynamodb")
+    URL = "https://3w0zg1oeh0.execute-api.us-east-2.amazonaws.com/production"
+    client = boto3.client("apigatewaymanagementapi", endpoint_url = URL)
+    dynamodb = boto3.resource('dynamodb')
+    dynamodb_client = boto3.client("dynamodb")
+    
+   
+    table = dynamodb.Table('random')
+    response1 = dynamodb_client.get_item(
+    
+        
+    TableName='random',
+    Key={
+        'randkey': {'S': 'Bag'},
+        'randkey': {'S': 'Dog'}
+    }
+    )
+    data = response1['Item']
+    pprint(response1['Item'])
+ 
+
+    
+#Server Secure Response
+    response  = dynamo.scan(TableName="randwebsock")
+    for connection in response["Items"]:
+        response = client.post_to_connection(ConnectionId=connection["connectionId"]["S"], Data=json.dumps(data))
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Have a nice Wordling')
+    }

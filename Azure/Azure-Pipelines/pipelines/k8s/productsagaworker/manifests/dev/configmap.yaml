@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: productsagaworker
+  namespace: catalog-integration-dev
+data:
+  Consul__Key: dev/catalog/integrations/product/saga
+  ConnectionStrings__Integration:    configmap.yaml: should be well protected

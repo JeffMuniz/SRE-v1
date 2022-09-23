@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  integration.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "65080:80"
+      - "65443:443"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  integration.mongo:
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=macnaima
+      - MONGO_INITDB_ROOT_PASSWORD=macnaima
+    ports:
+      - "27017:27017"
+    volumes:
+       - db-mongo:/data/db
+
+volumes:
+  db-mongo:

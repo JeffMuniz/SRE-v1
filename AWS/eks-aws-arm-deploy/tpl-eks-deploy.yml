@@ -1,0 +1,108 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{PROJECT_NAME}}
+  namespace: {{NAMESPACE}}
+  labels:
+    app: {{PROJECT_NAME}}
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{PROJECT_NAME}}
+      app: {{PROJECT_NAME}}
+      version: v1
+  template:
+    metadata:
+      labels:
+        name: {{PROJECT_NAME}}
+        app: {{PROJECT_NAME}}
+        version: v1
+    spec:
+      containers:
+      - env:
+        - name: LOGGING_BR_COM_mac
+          valueFrom:
+            configMapKeyRef:
+              key: LOGGING_BR_COM_mac
+              name: {{PROJECT_NAME}}
+        - name: LOGGING_LEVEL_ROOT
+          valueFrom:
+            configMapKeyRef:
+              key: LOGGING_LEVEL_ROOT
+              name: {{PROJECT_NAME}}
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              key: SERVER_PORT
+              name: {{PROJECT_NAME}}
+        - name: mac_RABBITMQ_HOST
+          valueFrom:
+            secretKeyRef:
+              key: mac_RABBITMQ_HOST
+              name: {{PROJECT_NAME}}
+              optional: false
+        - name: mac_RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mac_RABBITMQ_PASSWORD
+              name: {{PROJECT_NAME}}
+              optional: false
+        - name: mac_RABBITMQ_PORT
+          valueFrom:
+            secretKeyRef:
+              key: mac_RABBITMQ_PORT
+              name: {{PROJECT_NAME}}
+              optional: false
+        - name: mac_RABBITMQ_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: mac_RABBITMQ_USERNAME
+              name: {{PROJECT_NAME}}
+              optional: false
+        - name: mac_KAFKA_CLOUD_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: mac_KAFKA_CLOUD_PASSWORD
+              name: kafka-credentials
+              optional: false
+        - name: mac_KAFKA_CLOUD_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: mac_KAFKA_CLOUD_USERNAME
+              name: kafka-credentials
+              optional: false
+        - name: mac_KAFKA_CLOUD_SCHEMA-REGISTRY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: mac_KAFKA_CLOUD_SCHEMA-REGISTRY_KEY
+              name: kafka-credentials
+              optional: false
+        - name: mac_KAFKA_CLOUD_SCHEMA-REGISTRY_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: mac_KAFKA_CLOUD_SCHEMA-REGISTRY_SECRET
+              name: kafka-credentials
+              optional: false
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              key: KAFKA_BOOTSTRAP_SERVERS
+              name: kafka-config
+        - name: SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL
+          valueFrom:
+            configMapKeyRef:
+              key: KAFKA_SCHEMA_REGISTRY_URL
+              name: kafka-config
+        - name: SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL
+          valueFrom:
+            configMapKeyRef:
+              key: KAFKA_SCHEMA_REGISTRY_URL
+              name: kafka-config
+        name: {{PROJECT_NAME}}
+        image: {{IMAGE_URL}}
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always

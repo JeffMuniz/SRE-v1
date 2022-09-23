@@ -1,0 +1,80 @@
+parameters:
+  - name: Stage
+    type: string
+
+  - name: StageDisplayName
+    type: string
+
+  - name: DependsOn
+    type: object
+    default: null
+
+  - name: EnvironmentName
+    type: string
+
+  - name: DeploymentEnvironment
+    type: string
+
+  - name: AppName
+    type: string
+
+  - name: ContainerRegistry
+    type: string
+
+  - name: ImageRepository
+    type: string
+
+  - name: ImageTag
+    type: string
+
+  - name: ImagePullSecret
+    type: string
+
+  - name: DockerRegistryServiceConnection
+    type: string
+
+  - name: VmImage
+    type: string
+
+stages:
+
+- stage: ${{ parameters.Stage }}
+  displayName: ${{ parameters.StageDisplayName }}
+  ${{ if parameters.DependsOn }}:
+    dependsOn: '${{ parameters.DependsOn }}'
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy ${{ upper(parameters.EnvironmentName) }}
+    pool:
+      vmImage: ${{ parameters.VmImage }}
+    environment: ${{ parameters.DeploymentEnvironment }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: DownloadPipelineArtifact@2
+            displayName: Download Manifests Artifact
+            inputs:
+              artifactName: 'manifests'
+              downloadPath: '$(System.ArtifactsDirectory)'
+
+          - task: KubernetesManifest@0
+            displayName: Create ImagePullSecret
+            inputs:
+              action: createSecret
+              secretName: ${{ parameters.ImagePullSecret }}
+              dockerRegistryEndpoint: ${{ parameters.DockerRegistryServiceConnection }}
+
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: deploy
+              manifests: |
+                $(System.ArtifactsDirectory)/shared/?(*.yml|*.yaml)
+                $(System.ArtifactsDirectory)/shared/${{ lower(parameters.EnvironmentName) }}/?(*.yml|*.yaml)
+                $(System.ArtifactsDirectory)/${{ parameters.AppName }}/?(*.yml|*.yaml)
+                $(System.ArtifactsDirectory)/${{ parameters.AppName }}/${{ lower(parameters.EnvironmentName) }}/?(*.yml|*.yaml)
+              imagePullSecrets: |
+                ${{ parameters.ImagePullSecret }}
+              containers: |
+                ${{ parameters.ContainerRegistry }}/${{ parameters.ImageRepository }}:${{ parameters.ImageTag }}

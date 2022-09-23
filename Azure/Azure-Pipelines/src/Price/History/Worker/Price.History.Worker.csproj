@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>Latest</LangVersion>
+    <Configurations>Debug;DEV;QA;UAT;PP;PROD</Configurations>
+    <AssemblyName>Catalog.Integration.Price.History.Worker</AssemblyName>
+    <RootNamespace>Price.History.Worker</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Optimize Condition="'$(Configuration)'=='Debug'">false</Optimize>
+    <Optimize Condition="'$(Configuration)'!='Debug'">true</Optimize>
+    <DefineConstants Condition="'$(Configuration)'=='DEV'">DEV</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='QA'">QA</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='UAT'">UAT</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='PP'">PP</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='PROD'">PROD</DefineConstants>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit.Analyzers" Version="7.3.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Worker\Shared.Worker.csproj" />    
+  </ItemGroup>
+</Project>

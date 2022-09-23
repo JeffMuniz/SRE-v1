@@ -1,0 +1,50 @@
+{
+  "profiles": {
+    "Docker All Services": {
+      "commandName": "DockerCompose",
+      "composeLaunchServiceName": "availability.api",
+      "serviceActions": {
+        "availability.api": "StartDebugging",
+        "availability.manager.worker": "StartDebugging",
+        "availability.recovery.worker": "DoNotStart",
+        "availability.search.worker": "StartDebugging",
+        "dashboard.web": "StartDebugging",
+        "price.history.worker": "StartDebugging",
+        "product.change.worker": "StartDebugging",
+        "product.categorization.worker": "StartDebugging",
+        "product.enrichment.macnaima.api": "StartDebugging",
+        "product.enrichment.macnaima.worker": "StartDebugging",
+        "product.persistence.worker": "StartDebugging",
+        "product.saga.worker": "StartDebugging",
+        "product.supplier.magalu.worker": "DoNotStart",
+        "search.worker": "StartDebugging"
+      },
+      "composeLaunchAction": "LaunchBrowser",
+      "commandVersion": "1.0",
+      "composeLaunchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger"
+    },
+    "Docker Custom Services": {
+      "commandName": "DockerCompose",
+      "composeLaunchServiceName": "dashboard.web",
+      "serviceActions": {
+        "availability.api": "DoNotStart",
+        "availability.manager.worker": "DoNotStart",
+        "availability.recovery.worker": "DoNotStart",
+        "availability.search.worker": "DoNotStart",
+        "dashboard.web": "DoNotStart",
+        "price.history.worker": "DoNotStart",
+        "product.change.worker": "DoNotStart",
+        "product.categorization.worker": "StartDebugging",
+        "product.enrichment.macnaima.api": "DoNotStart",
+        "product.enrichment.macnaima.worker": "DoNotStart",
+        "product.persistence.worker": "DoNotStart",
+        "product.saga.worker": "DoNotStart",
+        "product.supplier.magalu.worker": "DoNotStart",
+        "search.worker": "DoNotStart"
+      },
+      "composeLaunchAction": "LaunchBrowser",
+      "commandVersion": "1.0",
+      "composeLaunchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/jobs"
+    }
+  }
+}

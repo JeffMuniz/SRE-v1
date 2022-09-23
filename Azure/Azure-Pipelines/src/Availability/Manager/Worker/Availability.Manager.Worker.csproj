@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>Latest</LangVersion>
+    <Configurations>Debug;DEV;QA;UAT;PP;PROD</Configurations>
+    <AssemblyName>Catalog.Integration.Availability.Manager.Worker</AssemblyName>
+    <RootNamespace>Availability.Manager.Worker</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Optimize Condition="'$(Configuration)'=='Debug'">false</Optimize>
+    <Optimize Condition="'$(Configuration)'!='Debug'">true</Optimize>
+    <DefineConstants Condition="'$(Configuration)'=='DEV'">DEV</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='QA'">QA</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='UAT'">UAT</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='PP'">PP</DefineConstants>
+    <DefineConstants Condition="'$(Configuration)'=='PROD'">PROD</DefineConstants>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CSharpFunctionalExtensions" Version="2.27.2" />
+    <PackageReference Include="MassTransit.Analyzers" Version="7.3.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.2.88" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Core" Version="8.0.3" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="8.0.3" />
+    <PackageReference Include="Polly" Version="7.2.3" />
+    <PackageReference Include="System.Linq.Async" Version="5.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Backend\Shared.Backend.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Messaging\Configuration\Shared.Messaging.Configuration.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Messaging\Contracts\Shared.Messaging.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Persistence\Mongo\Shared.Persistence.Mongo.csproj" />
+    <ProjectReference Include="..\..\..\Shared\Worker\Shared.Worker.csproj" />
+  </ItemGroup>
+</Project>

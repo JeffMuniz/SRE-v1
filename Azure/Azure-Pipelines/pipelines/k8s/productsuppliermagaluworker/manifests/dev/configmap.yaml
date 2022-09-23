@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: productsuppliermagaluworker
+  namespace: catalog-integration-dev
+data:
+  Consul__Key: dev/catalog/integrations/product/supplier/magalu
+  ConnectionStrings__HangFire_Storage:    configmap.yaml: should be well protected

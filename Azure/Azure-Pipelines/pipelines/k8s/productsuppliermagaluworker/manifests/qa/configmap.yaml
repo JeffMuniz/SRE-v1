@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: productsuppliermagaluworker
+  namespace: catalog-integration-qa
+data:
+  Consul__Key: qa/catalog/integrations/product/supplier/magalu
+  ConnectionStrings__HangFire_Storage: mongodb://aplicCatIntegrMacnaim:macn@mongodb.qa.machinacorp.com.br:27017/CatalogIntegration?authSource=admin
