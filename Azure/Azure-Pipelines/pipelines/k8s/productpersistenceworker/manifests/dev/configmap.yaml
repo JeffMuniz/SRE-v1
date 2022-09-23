@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: productpersistenceworker
-  namespace: catalog-integration-dev
-data:
-  Consul__Key: dev/catalog/integrations/product/persistence

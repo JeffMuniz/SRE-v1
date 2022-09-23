@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: availabilitysearchworker
-  namespace: catalog-integration-dev
-data:
-  Consul__Key: dev/catalog/integrations/availability/search
